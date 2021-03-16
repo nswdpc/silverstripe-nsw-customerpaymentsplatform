@@ -1,0 +1,9 @@
+---
+Name: nswdpc-cpp-routes
+After:
+  - '#rootroutes'
+  - '#coreroutes'
+---
+SilverStripe\Control\Director:
+  rules:
+    'cpp/api/v1//$Action': 'NSWDPC\Payments\CPP\APIControllerV1'
