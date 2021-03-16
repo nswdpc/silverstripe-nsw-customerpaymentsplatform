@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "nswdpc/omnipay-nswcpp" : "dev-master"
+        "nswdpc/omnipay-nswcpp" : "dev-master",
         "silverstripe/silverstripe-omnipay" : "^3",
         "symbiote/silverstripe-queuedjobs" : "^4.6",
         "lekoala/silverstripe-cms-actions" : "^1.1"
