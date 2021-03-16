@@ -32,6 +32,11 @@
         "friendsofphp/php-cs-fixer": "^2.18",
         "codeception/codeception" : "^2.5 | ^3 | ^4"
     },
+    "autoload": {
+        "psr-4": {
+            "NSWDPC\\Payments\\CPP\\" : "src/"
+        }
+    },
     "extra": {
         "expose": [
             "client/dist"
