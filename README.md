@@ -1,17 +1,29 @@
 # Silverstripe integration with the NSW Government Customer Payments Platform
 
-This module provides support within a Silverstripe install to take payments for items via the [NSW Government Customer Payments Platform (CPP)](https://www.digital.nsw.gov.au/transformation/government-technology-platforms-gtp/customer-payment-platform-cpp).
+This module provides support within a Silverstripe install to take payments from citizens for items via the [NSW Government Customer Payments Platform (CPP)](https://cpp-info-hub.service.nsw.gov.au/).
 
-The module provides an [Omnipay gateway](https://github.com/thephpleague/omnipay) within conventions defined by the official [Silverstripe Omnipay abstraction layer](https://github.com/silverstripe/silverstripe-omnipay).
-
-You can install this module standalone or as part of a Silvershop install.
-
-It provides:
+## Features
 
 + A payments administration area
 + Refund options
++ Disbursements (sub agencies)
 + Payment completion endpoint
 + A payments form
+
+You can install this module standalone and integrate it yourself or as part of a [Silvershop](https://github.com/silvershop/silvershop-core) install.
+
+## Omnipay resources
+
++ The [Omnipay](https://github.com/thephpleague/omnipay) project
++ [Silverstripe Omnipay](https://github.com/silverstripe/silverstripe-omnipay) module
++ [NSW DPC Omnipay gateway for the Customer Payments Platform](https://github.com/nswdpc/omnipay-nswcpp)
+
+## Requirements
+
++ nswdpc/omnipay-nswcpp - provides a gateway to the Customer Payments platform, including payment completion and refund handling
++ omnipay/common - Core components for the Omnipay PHP payment processing library
++ silverstripe/silverstripe-omnipay - the official Omnipay integration with Silverstripe
+
 
 ## Roadmap
 
