@@ -2,6 +2,9 @@
 
 namespace NSWDPC\Payments\CPP;
 
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\PermissionProvider;
+
 trait PaymentPermissions {
 
     public function providePermissions()
@@ -31,7 +34,7 @@ trait PaymentPermissions {
         return Permission::check('CPP_PAYMENT_CANEDIT', 'any', $member);
     }
 
-    public function canCreate($member = null)
+    public function canCreate($member = null, $context = [])
     {
         return Permission::check('CPP_PAYMENT_CANCREATE', 'any', $member);
     }

@@ -21,7 +21,9 @@
         "nswdpc/omnipay-nswcpp" : "dev-master",
         "silverstripe/silverstripe-omnipay" : "^3",
         "symbiote/silverstripe-queuedjobs" : "^4.6",
-        "lekoala/silverstripe-cms-actions" : "^1.1"
+        "lekoala/silverstripe-cms-actions" : "^1.1",
+        "silvershop/silverstripe-hasonefield" : "^3",
+        "codem/silverstripe-html5-inputs" : "^0.1"
     },
     "suggest" : {
         "silvershop/core" : "Provides a storefront interface for taking payments"
@@ -36,6 +38,9 @@
         "psr-4": {
             "NSWDPC\\Payments\\CPP\\" : "src/"
         }
+    },
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "expose": [
