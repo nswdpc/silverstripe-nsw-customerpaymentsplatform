@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Payments\CPP;
+namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;

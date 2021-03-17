@@ -56,7 +56,7 @@ This module is made available as an Open Source project under the [BSD-3-Clause]
 
 ## Configuration
 
-In your project configuration, store your `client-id` and `client-secret` values
+Configuration is completed per-environment using the `SilverStripe\Omnipay\GatewayInfo` convention:
 
 ```yml
 ---
@@ -65,13 +65,18 @@ Name: 'app-cpp-payments'
 After:
     - '#nswdpc-cpp-configuration'
 ---
-NSWDPC\Payments\CPP\Configuration:
-  client_id: 'my client id'
-  client_secret: 'my client secret'
-  jwt_secret: 'my jwt secret'
+SilverStripe\Omnipay\GatewayInfo:
+  NSWGOVCPP:
+    parameters:
+      clientId: 'a client id'
+      clientSecret: 'a client secret'
+      jwtSecret: 'a JWT key'
+      accessTokenUrl: 'https://access.example.com/token'
+      requestPaymentUrl: 'https://payment.example.com/request'
+      gatewayUrl: 'https://payment.example.com/pay'
+      refundUrl: 'https://payment.example.com/refund'
+      testMode: false
 ```
-
-The payment gateway will use the `client-id` and `client-secret` values to authenticate your payment requests.
 
 ## Maintainers
 

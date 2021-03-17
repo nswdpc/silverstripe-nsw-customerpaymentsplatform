@@ -1,5 +1,5 @@
 <?php
-namespace NSWDPC\Payments\CPP;
+namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use Silverstripe\Control\Controller;
 use Silverstripe\Control\Director;

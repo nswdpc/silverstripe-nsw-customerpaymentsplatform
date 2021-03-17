@@ -1,9 +1,8 @@
 <?php
 
-namespace NSWDPC\Payments\CPP;
+namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use SilverStripe\Security\Permission;
-use SilverStripe\Security\PermissionProvider;
 
 trait PaymentPermissions {
 

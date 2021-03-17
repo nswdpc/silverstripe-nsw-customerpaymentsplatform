@@ -6,4 +6,4 @@ After:
 ---
 SilverStripe\Control\Director:
   rules:
-    'cpp/api/v1//$Action': 'NSWDPC\Payments\CPP\APIControllerV1'
+    'cpp/api/v1//$Action': 'NSWDPC\Payments\NSWGOVCPP\Agency\APIControllerV1'

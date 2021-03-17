@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Payments\CPP;
+namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use Psr\Log\LoggerInterface;
 use SilverStripe\Core\Injector\Injector;

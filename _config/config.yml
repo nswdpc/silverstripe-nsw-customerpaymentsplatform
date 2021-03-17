@@ -1,16 +1,32 @@
 ---
 Name: nswdpc-cpp-configuration
 ---
-NSWDPC\Payments\CPP\Configuration:
-  # access token
-  client_id: ''
-  client_secret: ''
-  # payment completion
-  jwt_secret: ''
-  # various URLs
-  # where we get an access token from
-  accesstoken_url: ''
-  # where payments are taken
-  gateway_url: ''
-  # CPP refund request URL
-  refund_url: ''
+SilverStripe\Omnipay\Model\Payment:
+  allowed_gateways:
+    - 'NSWGOVCPP'
+SilverStripe\Omnipay\GatewayInfo:
+  NSWGOVCPP:
+    parameters:
+      clientId: ''
+      clientSecret: ''
+      jwtSecret: ''
+      accessTokenUrl: ''
+      requestPaymentUrl: ''
+      gatewayUrl: ''
+      refundUrl: ''
+      testMode: false
+---
+Except:
+  environment: 'live'
+---
+SilverStripe\Omnipay\Model\Payment:
+  allowed_gateways:
+    - 'Dummy'
+---
+Only:
+  environment: 'live'
+---
+SilverStripe\Omnipay\GatewayInfo:
+  NSWGOVCPP:
+    parameters:
+      testMode: false

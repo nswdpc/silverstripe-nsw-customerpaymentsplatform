@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Payments\CPP;
+namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use SilverStripe\Forms\DropdownField;
 use Codem\Utilities\HTML5\TelField;
