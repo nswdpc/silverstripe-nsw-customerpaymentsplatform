@@ -70,7 +70,7 @@ SilverStripe\Omnipay\GatewayInfo:
     parameters:
       clientId: 'a client id'
       clientSecret: 'a client secret'
-      jwtSecret: 'a JWT key'
+      jwtPublicKey: 'a JWT public key'
       accessTokenUrl: 'https://access.example.com/token'
       requestPaymentUrl: 'https://payment.example.com/request'
       gatewayUrl: 'https://payment.example.com/pay'
