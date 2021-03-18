@@ -11,6 +11,7 @@ use SilverShop\HasOneField\HasOneAddExistingAutoCompleter;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Omnipay\Model\Payment as OmnipayPayment;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\PermissionProvider;
 
@@ -82,7 +83,8 @@ class Payment extends DataObject implements PermissionProvider {
 
     private static $has_one = [
         'Refund' => Refund::class,
-        'PaymentMethod' => PaymentMethod::class
+        'PaymentMethod' => PaymentMethod::class,
+        'OmnipayPayment' => OmnipayPayment::class // link to the payment record
     ];
 
     private static $has_many = [
