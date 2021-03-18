@@ -4,6 +4,9 @@ namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use SilverStripe\Security\Permission;
 
+/**
+ * Provide CPP permissions to supporting models
+ */
 trait PaymentPermissions {
 
     public function providePermissions()
