@@ -35,6 +35,8 @@ class Payment extends DataObject implements PermissionProvider {
 
     private static $table_name = 'CppPayment';
 
+    private static $default_sort = "Created DESC";
+
     private static $db = [
         // collect payer details
         'PayerFirstname' => 'Varchar(255)',
@@ -72,13 +74,15 @@ class Payment extends DataObject implements PermissionProvider {
     private static $indexes = [
         'AgencyTransactionId' => [ 'type' => 'unique', 'columns' => ['AgencyTransactionId'] ],
         'PaymentMethod' => true,
-        'PaymentReference' => true,
+        'PaymentReference' => [ 'type' => 'unique', 'columns' => ['AgencyTransactionId'] ],
         'PaymentCompletionReference' => true,
         'BankReference' => true,
         'Amount' => true,
         'Surcharge' => true,
         'SurchargeSalesTax' => true,
-        'PaymentStatus' => true
+        'PaymentStatus' => true,
+        'Created' => true,
+        'LastEdited' => true
     ];
 
     private static $has_one = [
@@ -111,7 +115,7 @@ class Payment extends DataObject implements PermissionProvider {
         'AgencyTransactionId' => 'Agency Txn Id',
         'PaymentStatus' => 'Status',
         'SubAgencyCode' => 'Sub agency code',
-        'PaymentMethod' => 'Method',
+        'PaymentMethod.Code' => 'Method',
         'PaymentReference' => 'Pmt Ref',
         'PaymentCompletionReference' => 'Pmt Completion Ref',
         'BankReference' => 'Bank ref',
@@ -144,6 +148,28 @@ class Payment extends DataObject implements PermissionProvider {
                 ]
             );
         }
+    }
+
+    /**
+     * AgencyTransactionId is unique, return the record that matches
+     */
+    public static function getByAgencyTransactionId($txnId) : Payment {
+        if(empty($txnId)) {
+            throw  new \Exception("Cannot get a payment with an empty txnId");
+        }
+        $payment = Payment::get()->filter(['AgencyTransactionId' => $txnId])->first();
+        return $payment;
+    }
+
+    /**
+     * PaymentReference is unique, return the record that matches
+     */
+    public static function getByPaymentReference($refId) : Payment {
+        if(empty($refId)) {
+            throw  new \Exception("Cannot get a payment with an empty refId");
+        }
+        $payment = Payment::get()->filter(['PaymentReference' => $refId])->first();
+        return $payment;
     }
 
     /**
@@ -341,6 +367,17 @@ class Payment extends DataObject implements PermissionProvider {
         $fields->makeFieldReadonly('PaymentCompletionReference');
         $fields->makeFieldReadonly('AgencyTransactionId');
 
+        $fields->removeByName('OmnipayPaymentID');
+        $omnipay_payment_field = HasOneButtonField::create(
+            $this,
+            "OmnipayPayment"
+        );
+        $config = $omnipay_payment_field->getConfig();
+        $config->removeComponentsByType(HasOneAddExistingAutoCompleter::class);
+        $fields->addFieldToTab(
+            'Root.Main',
+            $omnipay_payment_field
+        );
         return $fields;
     }
 
