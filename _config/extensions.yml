@@ -1,0 +1,18 @@
+---
+Name: nswdpc-cpp-extensions
+---
+SilverStripe\Omnipay\Service\AuthorizeService:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\AuthorizeServiceExtension'
+SilverStripe\Omnipay\Service\PurchaseService:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\PurchaseServiceExtension'
+SilverStripe\Omnipay\Service\RefundService:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\RefundServiceExtension'
+SilverStripe\Omnipay\PaymentGatewayController:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\PaymentGatewayControllerExtension'
+SilverStripe\Omnipay\Model\Payment:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\PaymentExtension'
