@@ -2,12 +2,13 @@
 namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use Silverstripe\Admin\ModelAdmin;
+use SilverStripe\Omnipay\Model\Payment as OmnipayPayment;
 
 /**
  * Provide an administration are to view payments
  * @author James
  */
-class CppModelAdmin extends ModelAdmin {
+class CustomerPaymentsPlatformModelAdmin extends ModelAdmin {
 
     private static $url_segment = 'cpp';
 
@@ -15,7 +16,8 @@ class CppModelAdmin extends ModelAdmin {
 
     private static $managed_models = [
         Payment::class,
-        PaymentMethod::class
+        PaymentMethod::class,
+        OmnipayPayment::class
     ];
 
     private static $menu_title = 'CPP';
