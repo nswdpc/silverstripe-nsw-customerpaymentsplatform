@@ -23,7 +23,10 @@
         "symbiote/silverstripe-queuedjobs" : "^4.6",
         "lekoala/silverstripe-cms-actions" : "^1.1",
         "silvershop/silverstripe-hasonefield" : "^3",
-        "codem/silverstripe-html5-inputs" : "^0.1"
+        "codem/silverstripe-html5-inputs" : "^0.1",
+        "kriswallsmith/buzz": "^1.2",
+        "nyholm/psr7": "^1.4",
+        "firebase/php-jwt" : "^5"
     },
     "suggest" : {
         "silvershop/core" : "Provides a storefront interface for taking payments"
