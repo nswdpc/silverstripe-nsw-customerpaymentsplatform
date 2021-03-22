@@ -16,7 +16,6 @@ class CustomerPaymentsPlatformModelAdmin extends ModelAdmin {
 
     private static $managed_models = [
         Payment::class,
-        PaymentMethod::class,
         OmnipayPayment::class
     ];
 
