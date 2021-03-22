@@ -7,26 +7,27 @@ SilverStripe\Omnipay\Model\Payment:
 SilverStripe\Omnipay\GatewayInfo:
   NSWGOVCPP:
     parameters:
+      ## OAuth2
       clientId: ''
       clientSecret: ''
-      jwtSecret: ''
+      ## JWT decode
+      jwtPublicKey: ''
+      ## Various URLs
       accessTokenUrl: ''
       requestPaymentUrl: ''
       gatewayUrl: ''
       refundUrl: ''
+      ## Test mode is off
       testMode: false
----
-Except:
-  environment: 'live'
----
-SilverStripe\Omnipay\Model\Payment:
-  allowed_gateways:
-    - 'Dummy'
----
-Only:
-  environment: 'live'
----
-SilverStripe\Omnipay\GatewayInfo:
-  NSWGOVCPP:
-    parameters:
-      testMode: false
+    ## various configuration options
+    use_authorize: false
+    is_manual: false
+    use_async_notification: false
+    use_static_route: true
+    token_key: ''
+    is_offsite: true
+    can_capture: false
+    # Ref: https://github.com/silverstripe/silverstripe-omnipay/blob/master/docs/en/Configuration.md
+    can_refund: true
+    can_void: false
+    payment_identifier_length: 50
