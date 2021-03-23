@@ -7,8 +7,7 @@ use SilverStripe\Core\Config\Configurable;
 /**
  * Configuration model TBD
  */
-class Configuration {
-
+class Configuration
+{
     use Configurable;
-
 }

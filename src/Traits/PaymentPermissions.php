@@ -7,8 +7,8 @@ use SilverStripe\Security\Permission;
 /**
  * Provide CPP permissions to supporting models
  */
-trait PaymentPermissions {
-
+trait PaymentPermissions
+{
     public function providePermissions()
     {
         return [
@@ -50,5 +50,4 @@ trait PaymentPermissions {
     {
         return Permission::check('CPP_PAYMENT_CANVIEW', 'any', $member);
     }
-
 }

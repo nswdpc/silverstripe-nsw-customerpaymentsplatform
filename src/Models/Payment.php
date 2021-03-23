@@ -29,8 +29,8 @@ use SilverStripe\Security\PermissionProvider;
  * Represents a payment
  * @author James
  */
-class Payment extends DataObject implements PermissionProvider {
-
+class Payment extends DataObject implements PermissionProvider
+{
     use PaymentPermissions;
 
     /**
@@ -126,9 +126,9 @@ class Payment extends DataObject implements PermissionProvider {
         'AmountAmount' => 0,
         'RefundAmount' => 0,
         'RefundCurrency' => 'AUD',
-        'RefundReference' => NULL,
-        'PaymentReference' => NULL,
-        'AgencyTransactionId' => NULL,
+        'RefundReference' => null,
+        'PaymentReference' => null,
+        'AgencyTransactionId' => null,
         'Surcharge' => 0,
         'SurchargeSalesTax' => 0,
         'PaymentStatus' => '',
@@ -190,13 +190,14 @@ class Payment extends DataObject implements PermissionProvider {
         'RefundReference' => 'Refund Ref'
     ];
 
-    public function getTitle() {
-        if(!$this->exists()) {
+    public function getTitle()
+    {
+        if (!$this->exists()) {
             return _t(
                 __CLASS__ . ".MODEL_NOT_EXIST",
                 "New payment"
             );
-        } else if(!$this->AgencyTransactionId) {
+        } elseif (!$this->AgencyTransactionId) {
             return _t(
                 __CLASS__ . ".MODEL_TITLE",
                 "Payment #{id} for unknown agency transaction",
@@ -220,12 +221,13 @@ class Payment extends DataObject implements PermissionProvider {
      * @throws \Exception
      * @return NSWDPC\Payments\NSWGOVCPP\Agency\Payment
      */
-    public static function getByAgencyTransactionId($txnId) : Payment {
-        if(empty($txnId)) {
+    public static function getByAgencyTransactionId($txnId) : Payment
+    {
+        if (empty($txnId)) {
             throw  new \Exception("Cannot get a payment with an empty txnId");
         }
         $payment = Payment::get()->filter(['AgencyTransactionId' => $txnId])->first();
-        if(!$payment instanceof Payment) {
+        if (!$payment instanceof Payment) {
             throw  new \Exception("Payment not found");
         }
         return $payment;
@@ -236,12 +238,13 @@ class Payment extends DataObject implements PermissionProvider {
      * @throws \Exception
      * @return NSWDPC\Payments\NSWGOVCPP\Agency\Payment
      */
-    public static function getByPaymentReference($refId) : Payment {
-        if(empty($refId)) {
+    public static function getByPaymentReference($refId) : Payment
+    {
+        if (empty($refId)) {
             throw  new \Exception("Cannot get a payment with an empty refId");
         }
         $payment = Payment::get()->filter(['PaymentReference' => $refId])->first();
-        if(!$payment instanceof Payment) {
+        if (!$payment instanceof Payment) {
             throw  new \Exception("Payment not found");
         }
         return $payment;
@@ -251,11 +254,12 @@ class Payment extends DataObject implements PermissionProvider {
      * Create a 40 chr random hash for the transaction Id, with a prefix
      * @return string
      */
-    public static function createAgencyTransactionId() {
+    public static function createAgencyTransactionId()
+    {
         $prefix = "txn-";
         return $prefix . hash(
             "sha1",
-             bin2hex(random_bytes(16))
+            bin2hex(random_bytes(16))
         );
     }
 
@@ -265,10 +269,10 @@ class Payment extends DataObject implements PermissionProvider {
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        if(!$this->exists()) {
+        if (!$this->exists()) {
             $this->AgencyTransactionId = self::createAgencyTransactionId();
         }
-        if($this->RefundAmount->getAmount() && $this->RefundAmount->getAmount() > $this->Amount->getAmount()) {
+        if ($this->RefundAmount->getAmount() && $this->RefundAmount->getAmount() > $this->Amount->getAmount()) {
             throw new ValidationException(
                 _t(
                     __CLASS__ . ".INVALID_REFUND_AMOUNT",
@@ -285,7 +289,8 @@ class Payment extends DataObject implements PermissionProvider {
      * Get payment statuses
      * @return array
      */
-    public function getPaymentStatuses() : array {
+    public function getPaymentStatuses() : array
+    {
         return [
             self::CPP_PAYMENTSTATUS_REQUESTED,
             self::CPP_PAYMENTSTATUS_INITIALISED,
@@ -303,11 +308,12 @@ class Payment extends DataObject implements PermissionProvider {
      * Get the value of the payment status
      * @return string
      */
-    public function getPaymentStatusLabel() : string {
+    public function getPaymentStatusLabel() : string
+    {
         $value = $this->getField('PaymentStatus');
         $statuses = $this->getPaymentStatuses();
         $key = array_search($value, $statues);
-        if($key !== false) {
+        if ($key !== false) {
             return _t(__CLASS__ . '.PAYMENTSTATUS_' . $statuses[$key], $statuses[$key]);
         } else {
             return "";
@@ -317,13 +323,14 @@ class Payment extends DataObject implements PermissionProvider {
     /**
      * Refund this payment, must be for a completed payment which meets the CPP business validation rules
      */
-    public function doRefund() {
+    public function doRefund()
+    {
 
         // save and validate
         $this->write();
 
         // check if can be refunded
-        if(!$this->isRefundable(true)) {
+        if (!$this->isRefundable(true)) {
             return false;
         }
 
@@ -335,7 +342,7 @@ class Payment extends DataObject implements PermissionProvider {
          * @var ServiceResponse
          */
         $serviceResponse = $service->initiate($data);
-        if($serviceResponse instanceof ServiceResponse) {
+        if ($serviceResponse instanceof ServiceResponse) {
             $service->complete();
         }
         // a valid refund leaves a string RefundReference
@@ -345,8 +352,8 @@ class Payment extends DataObject implements PermissionProvider {
     /**
      * Get the status of this payment
      */
-    public function doGetStatus() {
-
+    public function doGetStatus()
+    {
     }
 
     /**
@@ -354,9 +361,10 @@ class Payment extends DataObject implements PermissionProvider {
      * @param bool $considerAmount whether to take the amount saved as the refund amount into account
      * TODO: add further business logic from CPP
      */
-    public function isRefundable($considerAmount = false) {
+    public function isRefundable($considerAmount = false)
+    {
         $hasValidRefundAmount = true;
-        if($considerAmount) {
+        if ($considerAmount) {
             // valid amounts are > 0 and <= payment amount
             $hasValidRefundAmount = $this->RefundAmount->getAmount() > 0
                 && ($this->RefundAmount->getAmount() <= $this->Amount->getAmount());
@@ -370,7 +378,8 @@ class Payment extends DataObject implements PermissionProvider {
      * Return whether the payment was refunded
      * TODO: add further business logic from CPP
      */
-    public function isRefunded() {
+    public function isRefunded()
+    {
         return $this->RefundReference != ""
             && $this->PaymentStatus == self::CPP_PAYMENTSTATUS_REFUND_APPLIED;
     }
@@ -381,7 +390,7 @@ class Payment extends DataObject implements PermissionProvider {
     public function getCMSActions()
     {
         $actions = parent::getCMSActions();
-        if($this->exists()) {
+        if ($this->exists()) {
             $action_get_status = new CustomAction(
                 'doGetStatus',
                 _t(__CLASS__ . '.GET_STATUS', 'Get status')
@@ -390,7 +399,7 @@ class Payment extends DataObject implements PermissionProvider {
             $actions->push($action_get_status);
 
             // if refundable, provide a refund button
-            if($this->isRefundable(true)) {
+            if ($this->isRefundable(true)) {
                 $action_refund = new CustomAction(
                     'doRefund',
                     _t(__CLASS__ . '.REFUND', 'Refund')
@@ -412,7 +421,8 @@ class Payment extends DataObject implements PermissionProvider {
     /**
      * Administration management fields for record
      */
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields = parent::getCMSFields();
 
         $fields->addFieldsToTab(
@@ -454,10 +464,11 @@ class Payment extends DataObject implements PermissionProvider {
             'doRefund'
         ]);
 
-        if($this->isRefunded()) {
+        if ($this->isRefunded()) {
             // payment was refunded
             $fields->addFieldsToTab(
-                "Root.Refund", [
+                "Root.Refund",
+                [
                     CompositeField::create(
                         LiteralField::create(
                             'RefundInformation',
@@ -495,7 +506,7 @@ class Payment extends DataObject implements PermissionProvider {
                     )
                 ]
             );
-        } else if($this->isRefundable()) {
+        } elseif ($this->isRefundable()) {
             // the payment is refundable, allow someone to enter in the
             $fields->addFieldsToTab(
                 "Root.Refund",
@@ -518,13 +529,13 @@ class Payment extends DataObject implements PermissionProvider {
                             'RefundAmount',
                             _t(__CLASS__ . '.REFUND_AMOUNT', 'Refund amount'),
                             $this->Amount
-                        )->setAttribute('required','required')
+                        )->setAttribute('required', 'required')
                             ->setDescription(
                                 _t(
                                     __CLASS__ . '.REFUND_AMOUNT_HELP',
                                     'The amount to be refunded, must be greater than 0, and less than or equal to the payment amount'
                                 )
-                            )->setAllowedCurrencies( self::CURRENCY_CODE ),
+                            )->setAllowedCurrencies(self::CURRENCY_CODE),
                         TextareaField::create(
                             'RefundReason',
                             _t(__CLASS__ . '.REFUND_REASON', 'Reason (optional)')
@@ -548,7 +559,8 @@ class Payment extends DataObject implements PermissionProvider {
             );
         } else {
             $fields->addFieldsToTab(
-                "Root.Refund", [
+                "Root.Refund",
+                [
                     CompositeField::create(
                         LiteralField::create(
                             'RefundInformation',
@@ -596,5 +608,4 @@ class Payment extends DataObject implements PermissionProvider {
         );
         return $fields;
     }
-
 }

@@ -24,8 +24,9 @@ class PurchaseServiceExtension extends Extension
      * Get value from gateway data passed in to extensions
      * @return mixed
      */
-    private function getGatewayDataValue($key, &$gatewayData) {
-        if(isset($gatewayData[ $key ])) {
+    private function getGatewayDataValue($key, &$gatewayData)
+    {
+        if (isset($gatewayData[ $key ])) {
             return $gatewayData[ $key ];
         } else {
             return null;
@@ -36,27 +37,27 @@ class PurchaseServiceExtension extends Extension
      * > onBeforePurchase called just before the purchase call is being made to the gateway.
      * > Passes the Gateway-Data (an array) as parameter, which allows you to modify the gateway data prior to being sent.
      */
-    public function onBeforePurchase(array &$gatewayData) {
-
-        Logger::log( "onBeforePurchase starts");
+    public function onBeforePurchase(array &$gatewayData)
+    {
+        Logger::log("onBeforePurchase starts");
 
         // the Omnipay Payment record
         $payment = $this->owner->getPayment();
-        if(!$payment || !$payment instanceof OmnipayPayment || !$payment->isInDB()) {
-            Logger::log( "onBeforePurchase OmnipayPayment is not valid");
+        if (!$payment || !$payment instanceof OmnipayPayment || !$payment->isInDB()) {
+            Logger::log("onBeforePurchase OmnipayPayment is not valid");
             return ;
         }
 
-        if($payment->Gateway != Payment::CPP_GATEWAY_CODE) {
-            Logger::log( "onBeforePurchase does not handle gateway: {$payment->Gateway}");
+        if ($payment->Gateway != Payment::CPP_GATEWAY_CODE) {
+            Logger::log("onBeforePurchase does not handle gateway: {$payment->Gateway}");
             return ;
         }
 
         // create a CPP payment record
         $cppPayment = Payment::create();
         $id = $cppPayment->write();
-        if($cppPayment->isInDB()) {
-            Logger::log( "onBeforePurchase assigned payment {$payment->ID}");
+        if ($cppPayment->isInDB()) {
+            Logger::log("onBeforePurchase assigned payment {$payment->ID}");
             $cppPayment->OmnipayPaymentID = $payment->ID;
         }
         $cppPayment->PayerFirstname = $this->getGatewayDataValue('firstName', $gatewayData);
@@ -76,7 +77,7 @@ class PurchaseServiceExtension extends Extension
         $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_INITIALISED;
         $cppPayment->write();
 
-        Logger::log( "onBeforePurchase created cppPayment #{$cppPayment->ID}");
+        Logger::log("onBeforePurchase created cppPayment #{$cppPayment->ID}");
 
         // create the CPP payload in the gateway data
         // this is POSTed to the CPP as a payment request
@@ -94,9 +95,10 @@ class PurchaseServiceExtension extends Extension
      * > onAfterPurchase called just after the Omnipay purchase call.
      * > Will pass the Omnipay request object as parameter.
      */
-    public function onAfterPurchase(AbstractRequest $request) {
-        if(!$request instanceof PurchaseRequest) {
-            Logger::log( "onAfterPurchase does not handle: " . get_class($request));
+    public function onAfterPurchase(AbstractRequest $request)
+    {
+        if (!$request instanceof PurchaseRequest) {
+            Logger::log("onAfterPurchase does not handle: " . get_class($request));
             return;
         }
     }
@@ -105,22 +107,22 @@ class PurchaseServiceExtension extends Extension
       * > onAfterSendPurchase called after send has been called on the Omnipay request object.
       * > You'll get the request as first, and the omnipay response as second parameter.
       */
-    public function onAfterSendPurchase(AbstractRequest $request, AbstractResponse $response) {
-
-        if(!$response instanceof PurchaseResponse) {
-            Logger::log( "onAfterSendPurchase does not handle: " . get_class($response));
+    public function onAfterSendPurchase(AbstractRequest $request, AbstractResponse $response)
+    {
+        if (!$response instanceof PurchaseResponse) {
+            Logger::log("onAfterSendPurchase does not handle: " . get_class($response));
             return;
         }
 
         // This occurs in the same process as onBeforePurchase - can use the same payment record
         $payment = $this->owner->getPayment();
-        if(!$payment || !$payment->isInDB()) {
+        if (!$payment || !$payment->isInDB()) {
             throw new \Exception("There is no Omnipay payment record for this purchase");
         }
 
         // retrieve the matching CPP payment
         $cppPayment = Payment::get()->filter(['OmnipayPaymentID' => $payment->ID])->first();
-        if(!$cppPayment || !$cppPayment->isInDB()) {
+        if (!$cppPayment || !$cppPayment->isInDB()) {
             throw new \Exception("Failed to find CPP payment record for the current payment");
         }
 
@@ -140,27 +142,27 @@ class PurchaseServiceExtension extends Extension
      * > onBeforeCompletePurchase called just before the completePurchase call is being made to the gateway.
      * > Passes the Gateway-Data (an array) as parameter, which allows you to modify the gateway data prior to being sent.
      */
-    public function onBeforeCompletePurchase(array &$gatewayData) {
-
+    public function onBeforeCompletePurchase(array &$gatewayData)
+    {
         $payment = $this->owner->getPayment();
-        if(!$payment || !$payment instanceof OmnipayPayment || !$payment->isInDB()) {
-            Logger::log( "onBeforeCompletePurchase OmnipayPayment instance is not valid");
+        if (!$payment || !$payment instanceof OmnipayPayment || !$payment->isInDB()) {
+            Logger::log("onBeforeCompletePurchase OmnipayPayment instance is not valid");
             return ;
         }
-        if($payment->Gateway != Payment::CPP_GATEWAY_CODE) {
-            Logger::log( "onBeforeCompletePurchase does not handle gateway: {$payment->Gateway}");
+        if ($payment->Gateway != Payment::CPP_GATEWAY_CODE) {
+            Logger::log("onBeforeCompletePurchase does not handle gateway: {$payment->Gateway}");
             return ;
         }
 
         // set the JWT as an empty string
         $gatewayData['jwt'] = '';
-        Logger::log( "onBeforeCompletePurchase starts");
-        if(Controller::has_curr()) {
+        Logger::log("onBeforeCompletePurchase starts");
+        if (Controller::has_curr()) {
             // retrieve the JWT from the request
             $controller = Controller::curr();
             $request = $controller->getRequest();
             $body = $request->getBody();
-            Logger::log( "onBeforeCompletePurchase got JWT ");
+            Logger::log("onBeforeCompletePurchase got JWT ");
             $decoded =  json_decode($body, true, JSON_THROW_ON_ERROR);
             $token = $decoded['token'] ?? '';
             // will call setJwt()  on the gateway request
@@ -172,12 +174,12 @@ class PurchaseServiceExtension extends Extension
      * > onAfterCompletePurchase called just after the Omnipay completePurchase call.
      * > Will pass the Omnipay request object as parameter.
      */
-    public function onAfterCompletePurchase(AbstractRequest $request) {
-        if(!$request instanceof CompletePurchaseRequest) {
+    public function onAfterCompletePurchase(AbstractRequest $request)
+    {
+        if (!$request instanceof CompletePurchaseRequest) {
             // this extension only handles CompletePurchaseRequest instances
-            Logger::log( "onAfterCompletePurchase does not handle: " . get_class($request));
+            Logger::log("onAfterCompletePurchase does not handle: " . get_class($request));
             return;
         }
     }
-
 }

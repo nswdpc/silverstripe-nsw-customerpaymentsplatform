@@ -23,8 +23,9 @@ class PaymentGatewayControllerExtension extends Extension
      * > updatePaymentActionFromRequest called for every request to the PaymentGatewayController.
      * > Can be used to set the payment action from the incoming request-data. Sometimes needed for static routes
      */
-    public function updatePaymentActionFromRequest(string $action, OmnipayPayment $payment, HTTPRequest $request) {
-        Logger::log( "updatePaymentActionFromRequest:" . $action );
+    public function updatePaymentActionFromRequest(string $action, OmnipayPayment $payment, HTTPRequest $request)
+    {
+        Logger::log("updatePaymentActionFromRequest:" . $action);
     }
 
     /**
@@ -37,19 +38,20 @@ class PaymentGatewayControllerExtension extends Extension
 
      * @return null|OmnipayPayment
      */
-    public function updatePaymentFromRequest(HTTPRequest $request, $gateway = null) {
+    public function updatePaymentFromRequest(HTTPRequest $request, $gateway = null)
+    {
 
         /*
          * Silently ignore requests for non NSWGOVCPP gateway
           * This can occur if another payment gateway is in uss
          */
-        if(!$gateway || $gateway != Payment::CPP_GATEWAY_CODE) {
+        if (!$gateway || $gateway != Payment::CPP_GATEWAY_CODE) {
             return;
         }
 
         // act based on status
         $status = strtolower($request->param('Status'));
-        switch($status) {
+        switch ($status) {
             case 'complete':
 
                 try {
@@ -68,13 +70,13 @@ class PaymentGatewayControllerExtension extends Extension
 
                     // decode the JWT sent back from CPP containing payment information
                     $jwtPublicKey = $parameters['jwtPublicKey'] ?? '';
-                    if(empty($jwtPublicKey)) {
+                    if (empty($jwtPublicKey)) {
                         throw new \Exception("no jwtPublicKey or empty in gateway parameters");
                     }
                     $body = $request->getBody();
                     $decoded = json_decode($body, true, JSON_THROW_ON_ERROR);
                     $jwt = $decoded['token'] ?? '';
-                    if(empty($jwt)) {
+                    if (empty($jwt)) {
                         throw new \Exception("no JWT or empty in POST request from CPP");
                     }
 
@@ -84,23 +86,23 @@ class PaymentGatewayControllerExtension extends Extension
                     $output = JWTProcessor::decode($jwt, $jwtPublicKey, $algos, $leeway);
 
                     // agencyTransactionId is used to determine the payment
-                    if(empty($output->agencyTransactionId)) {
+                    if (empty($output->agencyTransactionId)) {
                         throw new \Exception("no agencyTransactionId in POST request from CPP");
                     }
 
                     // get payment based on paymentReference
                     $cppPayment = Payment::getByAgencyTransactionId($output->agencyTransactionId);
-                    if(!$cppPayment || !$cppPayment->isInDB()) {
+                    if (!$cppPayment || !$cppPayment->isInDB()) {
                         throw new \Exception("Could not get CPP payment for Agency txn: {$output->agencyTransactionId}");
                     }
 
                     // get the linked payment record and return it
                     $payment = $cppPayment->OmnipayPayment();
-                    if(empty($payment)) {
+                    if (empty($payment)) {
                         throw new \Exception("Could not get linked OmnipayPayment payment record for CPP payment #{$cppPayment->ID}/{$output->agencyTransactionId}");
                     }
 
-                    if($payment->Status == 'Captured') {
+                    if ($payment->Status == 'Captured') {
                         // payment was already completed
                         // avoid CPP pinging again by sending a 422
                         throw new UnprocessableEntityException("Payment already captured");
@@ -116,23 +118,21 @@ class PaymentGatewayControllerExtension extends Extension
                     $cppPayment->PaymentMethod = $output->paymentMethod ?? '';
                     $cppPayment->write();
 
-                    if($payment instanceof OmnipayPayment) {
+                    if ($payment instanceof OmnipayPayment) {
                         return $payment;
                     }
 
                     // handling a NSWGOVCPP payment completion and  no payment can be found
                     throw new \Exception("updatePaymentFromRequest: payment #{$cppPayment->ID} has no omnipayPayment");
-
-
                 } catch (JWTDecodeException $e) {
-                    Logger::log( "Caught a JWTDecodeException");
+                    Logger::log("Caught a JWTDecodeException");
                     // Specific JWT decode error
                     // This is generally a 50x error code
                     $code = $e->getCode();
                     $errorMessage = $e->getMessage();
                     $externalErrorMessage = "Could not process the request";
                 } catch (UnprocessableEntityException $e) {
-                    Logger::log( "Caught a UnprocessableEntityException");
+                    Logger::log("Caught a UnprocessableEntityException");
                     // this exception will always trigger a 422
                     $code = 422;
                     $errorMessage = $e->getMessage();
@@ -146,20 +146,20 @@ class PaymentGatewayControllerExtension extends Extension
                 // Error condition handling
                 // sanity check on the HTTP error code
                 $code = intval($code);
-                if($code < 400 || $code > 599) {
+                if ($code < 400 || $code > 599) {
                     // ensure we use a sane 50x error code if the code provided
                     // would tell the CPP incorrect information
                     $code = 503;
                 }
 
-                if($errorMessage) {
-                    Logger::log( "Payment completion exception code={$code} message={$errorMessage}", "NOTICE");
+                if ($errorMessage) {
+                    Logger::log("Payment completion exception code={$code} message={$errorMessage}", "NOTICE");
                 }
 
                 // create and output the response, and exit early
                 $response = HTTPResponse::create();
                 $response->setStatusCode($code);
-                $response->addHeader('Content-Type','application/json; charset=utf-8');
+                $response->addHeader('Content-Type', 'application/json; charset=utf-8');
                 $response->setBody(json_encode(['error' => $externalErrorMessage]));
                 $response->output();
                 exit;//@todo move to config, enabled by default e.g for tests
@@ -170,7 +170,5 @@ class PaymentGatewayControllerExtension extends Extension
                 return;
                 break;
         } // end switch
-
     }
-
 }

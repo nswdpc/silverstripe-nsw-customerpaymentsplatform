@@ -10,8 +10,8 @@ use SilverStripe\Security\PermissionProvider;
  * Represents a refund for a payment. In CPP a payment can have a single refund.
  * @author James
  */
-class Disbursement extends DataObject implements PermissionProvider {
-
+class Disbursement extends DataObject implements PermissionProvider
+{
     use PaymentPermissions;
 
     private static $table_name = 'CppDisbursement';
@@ -29,5 +29,4 @@ class Disbursement extends DataObject implements PermissionProvider {
     private static $has_one = [
         'Payment' => Payment::class,
     ];
-
 }
