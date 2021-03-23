@@ -71,8 +71,8 @@ class PurchaseServiceExtension extends Extension
         $cppPayment->PaymentCompletionReference = '';// do not have one yet
         $cppPayment->BankReference = '';// do not have one yet
         $cppPayment->PaymentMethod = '';// do not have one yet
-        $cppPayment->Amount = $this->getGatewayDataValue('amount', $gatewayData);
-        $cppPayment->CurrencyCode = $this->getGatewayDataValue('currency', $gatewayData);
+        $cppPayment->AmountAmount = $this->getGatewayDataValue('amount', $gatewayData);
+        $cppPayment->AmountCurrency = $this->getGatewayDataValue('currency', $gatewayData);
         $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_INITIALISED;
         $cppPayment->write();
 
@@ -83,7 +83,7 @@ class PurchaseServiceExtension extends Extension
         // CPP will send us back a paymentReference
         $gatewayData['payload'] = [
             "productDescription" => "Payment for {$cppPayment->AgencyTransactionId}",
-            "amount" => $cppPayment->Amount,
+            "amount" => $cppPayment->Amount->getAmount(),
             "customerReference" => $cppPayment->PayerReference,
             "agencyTransactionId" => $cppPayment->AgencyTransactionId,
             "callingSystem" => "NSWDPC CPP Client"
