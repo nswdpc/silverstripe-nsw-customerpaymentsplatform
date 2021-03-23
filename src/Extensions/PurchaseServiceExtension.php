@@ -107,8 +107,8 @@ class PurchaseServiceExtension extends Extension
       */
     public function onAfterSendPurchase(AbstractRequest $request, AbstractResponse $response) {
 
-        if(!$resppnse instanceof PurchaseResponse) {
-            Logger::log( "onAfterSendPurchase does not handle: " . get_class($resppnse));
+        if(!$response instanceof PurchaseResponse) {
+            Logger::log( "onAfterSendPurchase does not handle: " . get_class($response));
             return;
         }
 
