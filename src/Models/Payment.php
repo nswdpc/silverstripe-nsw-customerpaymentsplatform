@@ -335,7 +335,9 @@ class Payment extends DataObject implements PermissionProvider {
          * @var ServiceResponse
          */
         $serviceResponse = $service->initiate($data);
-        $serviceResponse->complete();
+        if($serviceResponse instanceof ServiceResponse) {
+            $service->complete();
+        }
         // a valid refund leaves a string RefundReference
         return $this->RefundReference != '';
     }
