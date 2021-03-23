@@ -79,30 +79,6 @@ class RefundServiceExtension extends Extension
             Logger::log( "onAfterSendRefund does not handle: " . get_class($response));
             return;
         }
-
-        // This occurs in the same process as onBeforePurchase - can use the same payment record
-        $payment = $this->owner->getPayment();
-        if(!$payment || !$payment->isInDB()) {
-            throw new \Exception("There is no Omnipay payment record for this purchase");
-        }
-
-        // retrieve the matching CPP payment
-        $cppPayment = Payment::get()->filter(['OmnipayPaymentID' => $payment->ID])->first();
-        if(!$cppPayment || !$cppPayment->isInDB()) {
-            throw new \Exception("Failed to find CPP payment record for the current payment");
-        }
-
-        // get the refund reference from the RefundResponse
-        $refundReference = $response->getRefundReference();
-        $dt = new \Datetime();
-
-        // update the CPP payment record
-        $cppPayment->RefundReference = $refundReference;
-        $cppPayment->RefundDatetime = $dt->format('Y-m-d H:i:s');
-        // update payment to the CPP "in progress"
-        $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_REFUND_APPLIED;
-        $cppPayment->write();
-
     }
 
 }
