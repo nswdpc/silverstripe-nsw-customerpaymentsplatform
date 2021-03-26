@@ -108,7 +108,7 @@ class PaymentExtension extends DataExtension
         }
 
         // Get and validated the CPP refund reference from the RefundResponse
-        $refundReference = $response->getRefundReference();
+        $refundReference = $omnipayResponse->getRefundReference();
         if (empty($refundReference)) {
             throw new \Exception("The refund reference expected from the CPP gateway was empty");
         }
