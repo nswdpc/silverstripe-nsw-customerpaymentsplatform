@@ -5,6 +5,12 @@ namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 use Codem\Utilities\HTML5\TelField;
 use LeKoala\CmsActions\CustomAction;
 use LeKoala\CmsActions\SilverstripeIcons;
+use Omnipay\Omnipay;
+use Omnipay\NSWGOVCPP\FetchTransactionRequest;
+use Omnipay\NSWGOVCPP\FetchTransactionResponse;
+use Omnipay\NSWGOVCPP\FetchTransactionRequestException;
+use Omnipay\NSWGOVCPP\Gateway as CppGateway;
+use Omnipay\NSWGOVCPP\ParameterStorage;
 use SilverShop\HasOneField\HasOneButtonField;
 use SilverShop\HasOneField\HasOneAddExistingAutoCompleter;
 use SilverShop\HasOneField\GridFieldHasOneUnlinkButton;
@@ -21,6 +27,7 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Omnipay\Model\Payment as OmnipayPayment;
 use SilverStripe\Omnipay\Service\ServiceFactory;
+use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\PermissionProvider;
@@ -103,7 +110,7 @@ class Payment extends DataObject implements PermissionProvider
         // if taking payment on behalf of a sub agency
         'SubAgencyCode' => 'Varchar(255)',
         // payment gateway information
-        'PaymentReference' => 'Varchar(255)',
+        'PaymentReference' => 'Varchar(255)',//CPP payment reference
         'PaymentCompletionReference' => 'Varchar(255)',
         'BankReference' => 'Varchar(255)',
         'PaymentMethod' => 'Varchar(16)',
@@ -305,6 +312,21 @@ class Payment extends DataObject implements PermissionProvider
     }
 
     /**
+     * Get a valid payment status from the expected payment statuses
+     * @return string
+     */
+    public function getValidPaymentStatus($status) : string
+    {
+        $statuses = $this->getPaymentStatuses();
+        $key = array_search($status, $statuses);
+        if ($key !== false) {
+            return $statuses[$key];
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * Get the value of the payment status
      * @return string
      */
@@ -354,6 +376,75 @@ class Payment extends DataObject implements PermissionProvider
      */
     public function doGetStatus()
     {
+        // check if the payment has a reference from the CPP
+        if (!$this->PaymentReference) {
+            throw new \Exception(
+                _t(
+                    __CLASS__ . '.PAYMENT_STATUS_NO_PAYMENTREFERENCE',
+                    "This payment has no CPP payment reference value"
+                )
+            );
+        }
+
+        // get all parameters for the NSWGOVCPP gateway
+        $parameters =  GatewayInfo::getConfigSetting(Payment::CPP_GATEWAY_CODE, 'parameters');
+        ParameterStorage::setAll( $parameters );
+        $statusUrl = $parameters['statusUrl'] ?? '';
+        if(!$statusUrl) {
+            throw new \Exception(
+                _t(
+                    __CLASS__ . '.PAYMENT_STATUS_NO_STATUSURL',
+                    "The system is not configured to get a payment status - the CPP status URL is required"
+                )
+            );
+        }
+        $gateway = Omnipay::create( Payment::CPP_GATEWAY_CODE );
+        // get the transaction via the payment reference
+        $fetchTransactionRequest = $gateway->fetchTransaction([
+            'paymentReference' => $this->PaymentReference
+        ]);
+        // send the request, get response
+        $fetchTransactionResponse = $fetchTransactionRequest->send();
+        // get the paymentStatus
+        $paymentStatus = $fetchTransactionResponse->getPaymentStatus();
+        // is it valid?
+        $cppPaymentStatus = $this->getValidPaymentStatus($paymentStatus);
+        if(!$cppPaymentStatus) {
+            throw new \Exception(
+                _t(
+                    __CLASS__ . '.PAYMENT_STATUS_NOT_HANDLED',
+                    "The status returned '{paymentStatus}' is not a known CPP status",
+                    [
+                        'paymentStatus' => $paymentStatus
+                    ]
+                )
+            );
+
+        }
+        // store the current one
+        $previous = $this->PaymentStatus;
+        if($previous != $cppPaymentStatus) {
+            // update to the changed on
+            $this->PaymentStatus = $cppPaymentStatus;
+            $this->write();
+            // allow extension to handle a payment status change e.g notify customer
+            $this->extend('onAfterPaymentStatusChange', $previous);
+            return _t(
+                __CLASS__ . '.PAYMENT_STATUS_CHANGED_TO',
+                'The payment status was updated to \'{paymentStatus}\'',
+                [
+                    'paymentStatus' => $cppPaymentStatus
+                ]
+            );
+        } else {
+            return _t(
+                __CLASS__ . '.PAYMENT_STATUS_UNCHANGED',
+                'The payment status has not changed from \'{paymentStatus}\'',
+                [
+                    'paymentStatus' => $cppPaymentStatus
+                ]
+            );
+        }
     }
 
     /**
@@ -391,12 +482,16 @@ class Payment extends DataObject implements PermissionProvider
     {
         $actions = parent::getCMSActions();
         if ($this->exists()) {
-            $action_get_status = new CustomAction(
-                'doGetStatus',
-                _t(__CLASS__ . '.GET_STATUS', 'Get status')
-            );
-            $action_get_status->setButtonIcon(SilverStripeIcons::ICON_SYNC);
-            $actions->push($action_get_status);
+
+            // if the payment has a CPP reference, allow status checks
+            if ($this->PaymentReference) {
+                $action_get_status = new CustomAction(
+                    'doGetStatus',
+                    _t(__CLASS__ . '.GET_STATUS', 'Get status')
+                );
+                $action_get_status->setButtonIcon(SilverStripeIcons::ICON_SYNC);
+                $actions->push($action_get_status);
+            }
 
             // if refundable, provide a refund button
             if ($this->isRefundable(true)) {
