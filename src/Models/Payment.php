@@ -29,6 +29,8 @@ use SilverStripe\Omnipay\Model\Payment as OmnipayPayment;
 use SilverStripe\Omnipay\Service\ServiceFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\PermissionProvider;
 
@@ -125,7 +127,13 @@ class Payment extends DataObject implements PermissionProvider
         'RefundAmount' => 'Money',
         'RefundReason' => 'Text',
         'RefundDatetime' => 'Datetime',
-        'RefundReference' => 'Varchar(255)'
+        'RefundReference' => 'Varchar(255)',
+        // reconciliation
+        'RecReportDateTime' => 'Datetime',
+        'RecPaymentCompletionDate' => 'Datetime',
+        'RecAmount' => 'Money',
+        'RecAgencySettlementDate' => 'Datetime',
+        'RecGLIP' => 'Varchar(255)' // SAP GL Lodgement ID
     ];
 
     private static $defaults = [
@@ -184,17 +192,17 @@ class Payment extends DataObject implements PermissionProvider
     ];
 
     private static $summary_fields = [
+        'Created.Nice' => 'Created',
         'AgencyTransactionId' => 'Agency Txn Id',
         'PaymentStatus' => 'Status',
-        'SubAgencyCode' => 'Sub agency code',
         'PaymentMethod' => 'Method',
         'PaymentReference' => 'Pmt Ref',
         'PaymentCompletionReference' => 'Pmt Completion Ref',
         'BankReference' => 'Bank ref',
         'Amount' => 'Amount',
         'Surcharge' => 'Surcharge',
-        'SurchargeSalesTax' => 'Surcharge Sales Tax',
-        'RefundReference' => 'Refund Ref'
+        'RefundReference' => 'Refund',
+        'IsReconciledLabel.Nice' => 'Reconciled?'
     ];
 
     public function getTitle()
@@ -567,7 +575,7 @@ class Payment extends DataObject implements PermissionProvider
                     CompositeField::create(
                         LiteralField::create(
                             'RefundInformation',
-                            "<p class=\"message\">"
+                            "<p class=\"message notice\">"
                             . _t(
                                 __CLASS__ . '.REFUND_REFUNDED',
                                 'This payment was refunded.'
@@ -659,12 +667,12 @@ class Payment extends DataObject implements PermissionProvider
                     CompositeField::create(
                         LiteralField::create(
                             'RefundInformation',
-                            '<p class="message">'
+                            '<p class="message warning">'
                             . _t(
                                 __CLASS__ . '.NOT_REFUNDABLE_HELP',
                                 "This payment is not refundable. "
                                 . " A payment must have a status of completed, "
-                                . " and not have been previously refunded.</p>"
+                                . " and not have been previously refunded."
                             )
                             . '</p>'
                         )
@@ -686,6 +694,33 @@ class Payment extends DataObject implements PermissionProvider
         $fields->makeFieldReadonly('SubAgencyCode');
         $fields->makeFieldReadonly('IsDuplicate');
 
+        $fields->makeFieldReadonly('RecReportDateTime');
+        $fields->makeFieldReadonly('RecPaymentCompletionDate');
+        $fields->makeFieldReadonly('RecAmount');
+        $fields->makeFieldReadonly('RecAgencySettlementDate');
+        $fields->makeFieldReadonly('RecGLIP');
+
+        $fields->addFieldsToTab(
+            'Root.Reconciliation',
+            [
+                LiteralField::create(
+                    'ReconciliationInformation',
+                    '<p class="message notice">'
+                    . _t(
+                        __CLASS__ . '.RECONCILIATION_HELP',
+                        "When the reconciliation report is run, "
+                        . " these fields will become populated "
+                        . " if the payment is in the report"
+                    )
+                    . '</p>'
+                ),
+                $fields->dataFieldByName('RecReportDateTime'),
+                $fields->dataFieldByName('RecPaymentCompletionDate'),
+                $fields->dataFieldByName('RecAmount'),
+                $fields->dataFieldByName('RecAgencySettlementDate'),
+            ]
+        );
+
         $fields->removeByName('OmnipayPaymentID');
         $omnipay_payment_field = HasOneButtonField::create(
             $this,
@@ -702,5 +737,22 @@ class Payment extends DataObject implements PermissionProvider
             $omnipay_payment_field
         );
         return $fields;
+    }
+
+    /**
+     * Returns whether the amount matches the reconciliation amount reported via
+     * {@link NSWDPC\Payments\NSWGOVCPP\Agency\DailyReportService}
+     */
+    public function IsReconciled() : bool {
+        $amount = $this->Amount->getAmount();
+        $reconciledAmount = $this->RecAmount->getAmount();
+        if($amount) {
+            return $amount == $reconciledAmount;
+        }
+        return false;
+    }
+
+    public function IsReconciledLabel() : DBBoolean {
+        return DBField::create_field(DBBoolean::class, $this->IsReconciled());
     }
 }

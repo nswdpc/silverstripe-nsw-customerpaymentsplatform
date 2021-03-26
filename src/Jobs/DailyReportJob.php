@@ -20,6 +20,9 @@ class DailyReportJob extends AbstractQueuedJob
 
     public function __construct($date = null)
     {
+        if($date) {
+            $this->reconciliationDate =  $date;
+        }
     }
 
     /**
@@ -49,6 +52,30 @@ class DailyReportJob extends AbstractQueuedJob
      */
     public function process()
     {
+        try {
+            if($this->reconciliationDate) {
+                $datetime = new \DateTime($this->reconciliationDate);
+            } else {
+                $datetime = new \DateTime($date);
+            }
+            $service = new DailyReportService();
+            $result = $service->getForDate($datetime)->process();
+            if($result) {
+                $errors = $service->getErrors();
+                $reconciliationErrors = $service->getReconciliationErrors();
+                $reportLength = $this->getReportLength();
+                $this->addMessage(
+                    "Date: " . $datetime->format('Y-m-d H:i:s')
+                    . " "
+                    . " Report length:" .  count($reportLength)
+                    . " Errors:" .  count($errors)
+                    . " Reconciliation Errors:" .  count($reconciliationErrors)
+                );
+            }
+        } catch (\Exception $e) {
+            $this->addMessage('DailyReportJob failed with error: ' . $e->getMessage());
+        }
+        $this->isComplete = true;
     }
 
     /**
