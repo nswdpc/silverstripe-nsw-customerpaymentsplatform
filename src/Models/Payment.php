@@ -27,6 +27,7 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Omnipay\Model\Payment as OmnipayPayment;
 use SilverStripe\Omnipay\Service\ServiceFactory;
+use SilverStripe\Omnipay\Service\ServiceResponse;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
@@ -342,7 +343,7 @@ class Payment extends DataObject implements PermissionProvider
     {
         $value = $this->getField('PaymentStatus');
         $statuses = $this->getPaymentStatuses();
-        $key = array_search($value, $statues);
+        $key = array_search($value, $statuses);
         if ($key !== false) {
             return _t(__CLASS__ . '.PAYMENTSTATUS_' . $statuses[$key], $statuses[$key]);
         } else {

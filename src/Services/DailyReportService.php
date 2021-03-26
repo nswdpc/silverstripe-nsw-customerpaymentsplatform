@@ -134,7 +134,7 @@ class DailyReportService
                 $agencyTransactionId = $line[ "Agency Transaction ID" ];
                 // try to get a payment
                 $payment = Payment::getByAgencyTransactionId($agencyTransactionId);
-                $payment->RecReportDateTime = $dt->format('Y-m-d H:i:s');
+                $payment->RecReportDateTime = $datetime->format('Y-m-d H:i:s');
                 $amount = $line[ 'Amount' ];
                 $payment->RecAmountAmount = $amount;
                 if ($amount != $payment->AmountAmount) {

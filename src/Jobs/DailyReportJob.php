@@ -56,14 +56,14 @@ class DailyReportJob extends AbstractQueuedJob
             if ($this->reconciliationDate) {
                 $datetime = new \DateTime($this->reconciliationDate);
             } else {
-                $datetime = new \DateTime($date);
+                $datetime = new \DateTime();
             }
             $service = new DailyReportService();
             $result = $service->getForDate($datetime)->process();
             if ($result) {
                 $errors = $service->getErrors();
                 $reconciliationErrors = $service->getReconciliationErrors();
-                $reportLength = $this->getReportLength();
+                $reportLength = $service->getReportLength();
                 $this->addMessage(
                     "Date: " . $datetime->format('Y-m-d H:i:s')
                     . " "
