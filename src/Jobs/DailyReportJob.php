@@ -20,7 +20,7 @@ class DailyReportJob extends AbstractQueuedJob
 
     public function __construct($date = null)
     {
-        if($date) {
+        if ($date) {
             $this->reconciliationDate =  $date;
         }
     }
@@ -53,14 +53,14 @@ class DailyReportJob extends AbstractQueuedJob
     public function process()
     {
         try {
-            if($this->reconciliationDate) {
+            if ($this->reconciliationDate) {
                 $datetime = new \DateTime($this->reconciliationDate);
             } else {
                 $datetime = new \DateTime($date);
             }
             $service = new DailyReportService();
             $result = $service->getForDate($datetime)->process();
-            if($result) {
+            if ($result) {
                 $errors = $service->getErrors();
                 $reconciliationErrors = $service->getReconciliationErrors();
                 $reportLength = $this->getReportLength();

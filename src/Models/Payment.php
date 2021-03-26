@@ -396,9 +396,9 @@ class Payment extends DataObject implements PermissionProvider
 
         // get all parameters for the NSWGOVCPP gateway
         $parameters =  GatewayInfo::getConfigSetting(Payment::CPP_GATEWAY_CODE, 'parameters');
-        ParameterStorage::setAll( $parameters );
+        ParameterStorage::setAll($parameters);
         $statusUrl = $parameters['statusUrl'] ?? '';
-        if(!$statusUrl) {
+        if (!$statusUrl) {
             throw new \Exception(
                 _t(
                     __CLASS__ . '.PAYMENT_STATUS_NO_STATUSURL',
@@ -406,7 +406,7 @@ class Payment extends DataObject implements PermissionProvider
                 )
             );
         }
-        $gateway = Omnipay::create( Payment::CPP_GATEWAY_CODE );
+        $gateway = Omnipay::create(Payment::CPP_GATEWAY_CODE);
         // get the transaction via the payment reference
         $fetchTransactionRequest = $gateway->fetchTransaction([
             'paymentReference' => $this->PaymentReference
@@ -417,7 +417,7 @@ class Payment extends DataObject implements PermissionProvider
         $paymentStatus = $fetchTransactionResponse->getPaymentStatus();
         // is it valid?
         $cppPaymentStatus = $this->getValidPaymentStatus($paymentStatus);
-        if(!$cppPaymentStatus) {
+        if (!$cppPaymentStatus) {
             throw new \Exception(
                 _t(
                     __CLASS__ . '.PAYMENT_STATUS_NOT_HANDLED',
@@ -427,11 +427,10 @@ class Payment extends DataObject implements PermissionProvider
                     ]
                 )
             );
-
         }
         // store the current one
         $previous = $this->PaymentStatus;
-        if($previous != $cppPaymentStatus) {
+        if ($previous != $cppPaymentStatus) {
             // update to the changed on
             $this->PaymentStatus = $cppPaymentStatus;
             $this->write();
@@ -743,16 +742,18 @@ class Payment extends DataObject implements PermissionProvider
      * Returns whether the amount matches the reconciliation amount reported via
      * {@link NSWDPC\Payments\NSWGOVCPP\Agency\DailyReportService}
      */
-    public function IsReconciled() : bool {
+    public function IsReconciled() : bool
+    {
         $amount = $this->Amount->getAmount();
         $reconciledAmount = $this->RecAmount->getAmount();
-        if($amount) {
+        if ($amount) {
             return $amount == $reconciledAmount;
         }
         return false;
     }
 
-    public function IsReconciledLabel() : DBBoolean {
+    public function IsReconciledLabel() : DBBoolean
+    {
         return DBField::create_field(DBBoolean::class, $this->IsReconciled());
     }
 }

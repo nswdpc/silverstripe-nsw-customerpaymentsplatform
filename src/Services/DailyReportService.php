@@ -45,13 +45,14 @@ class DailyReportService
 
     /*/
      */
-    public function getForDate(\Datetime $datetime) {
+    public function getForDate(\Datetime $datetime)
+    {
 
         // get all parameters for the NSWGOVCPP gateway
         $parameters =  GatewayInfo::getConfigSetting(Payment::CPP_GATEWAY_CODE, 'parameters');
-        ParameterStorage::setAll( $parameters );
+        ParameterStorage::setAll($parameters);
         $dailyReconciliationUrl = $parameters['dailyReconciliationUrl'] ?? '';
-        if(!$dailyReconciliationUrl) {
+        if (!$dailyReconciliationUrl) {
             throw new \Exception(
                 _t(
                     __CLASS__ . '.PAYMENT_STATUS_NO_RECONCILIATION_URL',
@@ -59,7 +60,7 @@ class DailyReportService
                 )
             );
         }
-        $gateway = Omnipay::create( Payment::CPP_GATEWAY_CODE );
+        $gateway = Omnipay::create(Payment::CPP_GATEWAY_CODE);
         // get the transaction via the payment reference
         $request = $gateway->dailyReconciliation([
             'reconciliationDate' => $datetime
@@ -70,15 +71,18 @@ class DailyReportService
         return $this;
     }
 
-    public function getErrors() : array {
+    public function getErrors() : array
+    {
         return $this->errors;
     }
 
-    public function getReconciliationErrors() : array {
+    public function getReconciliationErrors() : array
+    {
         return $this->reconciliationErrors;
     }
 
-    public function getReportLength() : int {
+    public function getReportLength() : int
+    {
         return $this->reportLength;
     }
 
@@ -86,26 +90,27 @@ class DailyReportService
      * Build the report from the raw report data, resetting error values and the link
      * @return array
      */
-    private function buildReportFromRaw() : array {
+    private function buildReportFromRaw() : array
+    {
         $this->reportLength = 0;
         $this->errors = [];
         $this->reconciliationErrors = [];
-        if($this->reportRaw === false || !is_string($this->reportRaw)) {
+        if ($this->reportRaw === false || !is_string($this->reportRaw)) {
             throw new \Exception("Failed to retrieve the raw report data");
         }
         // read the report into memory to use fgetcsv
-        $stream = fopen('php://memory','r+');
+        $stream = fopen('php://memory', 'r+');
         fwrite($stream, $this->reportRaw);
         rewind($stream);
         // empty report
         $report = [];
         $c = 0;
         $headers = [];
-        while ( ( $data = fgetcsv($stream, 0, ",", '"') ) !== false ) {
-            if($c == 0) {
+        while (($data = fgetcsv($stream, 0, ",", '"')) !== false) {
+            if ($c == 0) {
                 // the first line contains the report header
                 $headers = $data;
-            } else if(!empty($headers)) {
+            } elseif (!empty($headers)) {
                 // pad out the data to ensure array_combine doesn't fail
                 // this can occur if empty values are in the CSV at the end
                 $report[] = array_combine($headers, array_pad($data, count($headers), ""));
@@ -119,9 +124,10 @@ class DailyReportService
     /**
      * Process the current report
      */
-    public function process() {
+    public function process()
+    {
         $report = $this->buildReportFromRaw();
-        foreach($report as $line) {
+        foreach ($report as $line) {
             try {
                 $this->reportLength++;
                 $datetime = new \Datetime();
@@ -131,7 +137,7 @@ class DailyReportService
                 $payment->RecReportDateTime = $dt->format('Y-m-d H:i:s');
                 $amount = $line[ 'Amount' ];
                 $payment->RecAmountAmount = $amount;
-                if($amount != $payment->AmountAmount) {
+                if ($amount != $payment->AmountAmount) {
                     $this->reconciliationErrors[] = $payment;
                 }
                 $payment->RecPaymentCompletionDate = $line[ 'Payment Completed Date' ];
@@ -145,5 +151,4 @@ class DailyReportService
         }
         return $this->reportLength > 0;
     }
-
 }

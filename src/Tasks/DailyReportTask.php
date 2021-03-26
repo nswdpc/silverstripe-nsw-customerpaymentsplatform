@@ -2,7 +2,9 @@
 
 namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
-use SilverStripe\Control\Director;;
+use SilverStripe\Control\Director;
+
+;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
 
@@ -12,18 +14,20 @@ use SilverStripe\ORM\DB;
  */
 class DailyReportTask extends BuildTask
 {
-
     private static $segment = "cppreconciliationtask";
 
-    public function getTitle() {
+    public function getTitle()
+    {
         return _t(__CLASS__ . '.TITLE', 'CPP Daily report task');
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return _t(__CLASS__ . '.DESCRIPTION', 'Provide a date in an acceptable format to get a CPP reconiliation report of that date. If not date is supplied, yesterday will be used');
     }
 
-    public function run($request) {
+    public function run($request)
+    {
         if (!Director::is_cli()) {
             print "This report  only accessible via shell\n";
             return 1;
@@ -32,7 +36,7 @@ class DailyReportTask extends BuildTask
         try {
             $date = $request->getVar('date');
 
-            if($date) {
+            if ($date) {
                 // specific date
                 $datetime = new \DateTime($date);
             } else {
@@ -43,7 +47,7 @@ class DailyReportTask extends BuildTask
 
             $service = new DailyReportService();
             $result = $service->getForDate($datetime)->process();
-            if($result) {
+            if ($result) {
                 $errors = $service->getErrors();
                 $reconciliationErrors = $service->getReconciliationErrors();
                 $reportLength = $service->getReportLength();
@@ -57,18 +61,17 @@ class DailyReportTask extends BuildTask
                 );
 
                 print "Errors\n";
-                if(!empty($errors)) {
+                if (!empty($errors)) {
                     print_r($errors);
                 }
 
                 print "Reconciliation Errors\n";
-                if(!empty($reconciliationErrors)) {
+                if (!empty($reconciliationErrors)) {
                     print_r($reconciliationErrors);
                 }
             }
         } catch (\Exception $e) {
-            DB::alteration_message( $e->getMessage() , "error");
+            DB::alteration_message($e->getMessage(), "error");
         }
     }
-
 }
