@@ -18,6 +18,7 @@ SilverStripe\Omnipay\GatewayInfo:
       gatewayUrl: ''
       refundUrl: ''
       statusUrl: ''
+      dailyReconciliationUrl: ''
       ## Test mode is off
       testMode: false
     ## various configuration options
