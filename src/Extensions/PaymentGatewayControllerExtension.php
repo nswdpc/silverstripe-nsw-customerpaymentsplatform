@@ -52,6 +52,21 @@ class PaymentGatewayControllerExtension extends Extension
         // act based on status
         $status = strtolower($request->param('Status'));
         switch ($status) {
+            case 'cancel':
+                /**
+                 * customer has chosen to cancel the payment
+                 * the CPP will redirect the customer back here
+                 * need to store a status and redirect the customer to their order
+                 */
+                break;
+            case 'success':
+                /**
+                 * customer sucessfully made the payment
+                 * the CPP will redirect the customer back here, after complete() below
+                 * was requested by the CPP
+                 * need to store a status and redirect the customer to their order
+                 */
+                break;
             case 'complete':
 
                 try {
