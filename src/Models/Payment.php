@@ -15,6 +15,7 @@ use SilverShop\HasOneField\HasOneButtonField;
 use SilverShop\HasOneField\HasOneAddExistingAutoCompleter;
 use SilverShop\HasOneField\GridFieldHasOneUnlinkButton;
 use SilverShop\HasOneField\GridFieldHasOneEditButton;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FormAction;
@@ -88,6 +89,13 @@ class Payment extends DataObject implements PermissionProvider
      * @var string
      */
     const CPP_GATEWAY_CODE = 'NSWGOVCPP';
+
+    /**
+     * Agency transaction prefix (9 chrs max).
+     * @config
+     * @var string
+     */
+    private static $transaction_prefix = 'txn';
 
     /**
      * CPP only accepts AUD payments
@@ -267,27 +275,49 @@ class Payment extends DataObject implements PermissionProvider
     }
 
     /**
-     * Create a 40 chr random hash for the transaction Id, with a prefix
+     * Create a unique transaction id with a prefix
+     * This module generates transaction references in the format prefix-ymd-123-45z-ab1
      * @return string
      */
     public static function createAgencyTransactionId()
     {
-        $prefix = "txn-";
-        return $prefix . hash(
-            "sha1",
-            bin2hex(random_bytes(16))
-        );
+        $prefix = substr(Config::inst()->get( Payment::class, 'transaction_prefix'), 0, 9);
+        do {
+            $parts = str_split(bin2hex(random_bytes(5)), 3);
+            if (count($parts) < 3) {
+                throw new \RuntimeException('Failed to create parts for agency transaction identifier');
+            }
+            $date =
+            $all = [
+                $prefix,
+                date('Ymd'),
+                $parts[0],
+                $parts[1],
+                $parts[2]
+            ];
+            $agencyTransactionId = implode("-", $all);
+        } while (self::get()->filter( ['AgencyTransactionId' => $agencyTransactionId ])->exists());
+        return $agencyTransactionId;
     }
 
     /**
-     * Ensure the txn ID is created when the record is created
+     * Validate that the transaction reference matches our pattern
+     * e.g prefix-ymd-abc-1ab-xy5
+     */
+    public static function validateTransactionReference(string $reference) {
+        $prefix = preg_quote(Config::inst()->get( Payment::class, 'transaction_prefix'));
+        $date = date('Ymd');
+        $pattern = "/^{$prefix}\-({$date})\-[a-z0-9]{3}\-[a-z0-9]{3}\-[a-z0-9]{3}$/";
+        $result = preg_match($pattern, $reference, $matches);
+        return $result == 1;
+    }
+
+    /**
+     * Set defaults as required
      */
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        if (!$this->exists()) {
-            $this->AgencyTransactionId = self::createAgencyTransactionId();
-        }
         if ($this->RefundAmount->getAmount() && $this->RefundAmount->getAmount() > $this->Amount->getAmount()) {
             throw new ValidationException(
                 _t(
@@ -299,6 +329,8 @@ class Payment extends DataObject implements PermissionProvider
                 )
             );
         }
+        // PayerReference cannot include html tags (CPP customerReference)
+        $this->PayerReference = strip_tags($this->PayerReference);
     }
 
     /**

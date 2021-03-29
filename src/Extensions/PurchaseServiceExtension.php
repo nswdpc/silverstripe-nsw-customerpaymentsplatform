@@ -44,30 +44,73 @@ class PurchaseServiceExtension extends Extension
         // the Omnipay Payment record
         $payment = $this->owner->getPayment();
         if (!$payment || !$payment instanceof OmnipayPayment || !$payment->isInDB()) {
-            Logger::log("onBeforePurchase OmnipayPayment is not valid");
+            Logger::log("onBeforePurchase OmnipayPayment is not valid", "WARNING");
             return ;
         }
 
         if ($payment->Gateway != Payment::CPP_GATEWAY_CODE) {
+            // this is OK, just need to ignore payments for other gateways
             Logger::log("onBeforePurchase does not handle gateway: {$payment->Gateway}");
             return ;
         }
 
         // create a CPP payment record
         $cppPayment = Payment::create();
-        $id = $cppPayment->write();
-        if ($cppPayment->isInDB()) {
-            Logger::log("onBeforePurchase assigned payment {$payment->ID}");
-            $cppPayment->OmnipayPaymentID = $payment->ID;
+
+        /**
+         * Set the Agency Transaction ID as that is set by the gateway
+         * If you are using Silvershop this will be updated via the generateReference extension method
+         * and will modify the original reference created
+         * transactionId when Silvershop is installed is generated in {@link \SilverShop\Checkout\OrderProcessor::getGatewayData}
+         * The silvershop order process will provide an increment against this value for multiple payment attempts against the same order
+         */
+        $cppPayment->AgencyTransactionId = Payment::createAgencyTransactionId();
+        // override the transactionId provided (e.g Silvershop Order.Reference, if module is installed)
+        $gatewayData['transactionId'] = $cppPayment->AgencyTransactionId;
+        // validate AgencyTransactionId
+        if(!CPPBusinessRuleService::validateAgencyTransactionId($cppPayment->AgencyTransactionId)) {
+            Logger::log("Error: new CPP payment has invalid agency transaction ID '{$cppPayment->AgencyTransactionId}'", "ERROR");
+            throw new \RuntimeException(
+                _t(
+                    __CLASS_ . ".NO_AGENCY_TXN_ID",
+                    "The payment request failed due to an internal error"
+                )
+            );
         }
+
+        // create and validate the payment record
+        $id = $cppPayment->write();
+        if (!$cppPayment->isInDB()) {
+            Logger::log("Error: the CPP payment record could not be saved for txn '{$cppPayment->AgencyTransactionId}'", "ERROR");
+            throw new \RuntimeException(
+                _t(
+                    __CLASS_ . ".NO_PAYMENT_RECORD_SAVED",
+                    "The payment request failed due to an internal error"
+                )
+            );
+        }
+
+        // link to Omnipay record
+        $cppPayment->OmnipayPaymentID = $payment->ID;
+
+        /**
+         * Payer details
+         */
         $cppPayment->PayerFirstname = $this->getGatewayDataValue('firstName', $gatewayData);
         $cppPayment->PayerSurname = $this->getGatewayDataValue('lastName', $gatewayData);
         $cppPayment->PayerMiddlenames = $this->getGatewayDataValue('middleNames', $gatewayData);
         $cppPayment->PayerEmail = $this->getGatewayDataValue('email', $gatewayData);
         $cppPayment->PayerPhone = $this->getGatewayDataValue('phone', $gatewayData);
         $cppPayment->PayerReference = $this->getGatewayDataValue('payerReference', $gatewayData);
+
+        /**
+         * Product
+         */
         $cppPayment->ProductDescription = $this->getGatewayDataValue('productDescription', $gatewayData);
-        $cppPayment->AgencyTransactionId = $this->getGatewayDataValue('transactionId', $gatewayData);
+
+        /**
+         * Set gateway defaults prior to purchase attempt
+         */
         $cppPayment->PaymentReference = '';// do not have one yet
         $cppPayment->PaymentCompletionReference = '';// do not have one yet
         $cppPayment->BankReference = '';// do not have one yet
@@ -75,19 +118,59 @@ class PurchaseServiceExtension extends Extension
         $cppPayment->AmountAmount = $this->getGatewayDataValue('amount', $gatewayData);
         $cppPayment->AmountCurrency = $this->getGatewayDataValue('currency', $gatewayData);
         $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_INITIALISED;
+
+        // Run validation on write()
         $cppPayment->write();
 
-        Logger::log("onBeforePurchase created cppPayment #{$cppPayment->ID}");
+        // check for valid data
+        // validate AgencyTransactionId
+        if(!CPPBusinessRuleService::validateAgencyTransactionId($cppPayment->AgencyTransactionId)) {
+            Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid agency transction ID '{$cppPayment->AgencyTransactionId}'", "ERROR");
+            throw new \RuntimeException(
+                _t(
+                    __CLASS_ . ".NO_AGENCY_TXN_ID",
+                    "The payment request failed due to an internal error"
+                )
+            );
+        }
 
-        // create the CPP payload in the gateway data
-        // this is POSTed to the CPP as a payment request
-        // CPP will send us back a paymentReference
+        // set product description (todo)
+        $productDescription = "Payment for {$cppPayment->AgencyTransactionId}";
+        // set amount and validate
+        $amount = $cppPayment->Amount->getAmount();
+        if(!CPPBusinessRuleService::validateAmount($amount)) {
+            Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid amount '{$amount}'", "ERROR");
+            throw new \RuntimeException(
+                _t(
+                    __CLASS_ . ".INVALID_AMOUNT",
+                    "The payment request failed due to an internal error"
+                )
+            );
+        }
+
+        $callingSystem = $cppPayment->config()->get('calling_system');
+        if(!CPPBusinessRuleService::validateCallingSystem($callingSystem)) {
+            Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid callingSystem '{$callingSystem}'", "ERROR");
+            throw new \RuntimeException(
+                _t(
+                    __CLASS_ . ".INVALID_CALLINGSYSTEM",
+                    "The payment request failed due to an internal error"
+                )
+            );
+        }
+
+        /**
+         * Create the CPP payload in the gateway data
+         * this is POSTed to the CPP as a payment request
+         * CPP will send us back a paymentReference
+         * TODO: discounts, subAgencyCode, disbursements
+         */
         $gatewayData['payload'] = [
-            "productDescription" => "Payment for {$cppPayment->AgencyTransactionId}",
-            "amount" => $cppPayment->Amount->getAmount(),
-            "customerReference" => $cppPayment->PayerReference,
-            "agencyTransactionId" => $cppPayment->AgencyTransactionId,
-            "callingSystem" => "NSWDPC CPP Client"
+            "productDescription" => $productDescription, // mandatory
+            "amount" => $amount, // mandatory
+            "agencyTransactionId" => $cppPayment->AgencyTransactionId, // mandatory
+            "callingSystem" => $callingSystem, // mandatory
+            "customerReference" => $cppPayment->PayerReference, // optional
         ];
     }
 
