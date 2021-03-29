@@ -5,22 +5,53 @@ namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 use Omnipay\NSWGOVCPP\CompletePurchaseResponse;
 use Omnipay\NSWGOVCPP\RefundResponse;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Omnipay\Model\Payment as OmnipayPayment;
 use SilverStripe\Omnipay\Service\ServiceResponse;
 use Symfony\Component\HttpFoundation\Response;
+use SilverShop\HasOneField\HasOneButtonField;
+use SilverShop\HasOneField\HasOneAddExistingAutoCompleter;
+use SilverShop\HasOneField\GridFieldHasOneUnlinkButton;
+use SilverShop\HasOneField\GridFieldHasOneEditButton;
+use SilverShop\Model\Order as SilvershopOrder;
 
 /**
  * Provides extension handling to maintain the relation between the CPP Payment
  * model and the Silverstripe Omnipay payment model
+ * It decorates {@link SilverStripe\Omnipay\Model\Payment}
  *
  * @author James
  */
-class PaymentExtension extends DataExtension
+class OmnipayPaymentExtension extends DataExtension
 {
     private static $belongs_to = [
-        'CppPayment' => Payment::class
+        // this Omnipay Payment record belongs to the CppPayment.OmnipayPaymentID relation
+        'CppPayment' => Payment::class . ".OmnipayPayment"
     ];
+
+    public function updateCMSFields(FieldList $fields)
+    {
+        if(class_exists(SilvershopOrder::class)) {
+
+            $fields->removeByName('OrderID');
+            $silvershop_order_field = HasOneButtonField::create(
+                $this->owner,
+                "Order"
+            );
+            $config = $silvershop_order_field->getConfig();
+            $config->removeComponentsByType(HasOneAddExistingAutoCompleter::class);
+            $config->removeComponentsByType(GridFieldHasOneUnlinkButton::class);
+            $button = $config->getComponentByType(GridFieldHasOneEditButton::class);
+            $button->setButtonName('View');
+
+            $fields->push(
+                $silvershop_order_field
+            );
+
+        }
+    }
 
     /**
      * onCaptured - called from markCompleted

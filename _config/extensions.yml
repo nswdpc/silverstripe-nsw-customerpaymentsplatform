@@ -15,4 +15,7 @@ SilverStripe\Omnipay\PaymentGatewayController:
     - 'NSWDPC\Payments\NSWGOVCPP\Agency\PaymentGatewayControllerExtension'
 SilverStripe\Omnipay\Model\Payment:
   extensions:
-    - 'NSWDPC\Payments\NSWGOVCPP\Agency\PaymentExtension'
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\OmnipayPaymentExtension'
+SilverStripe\Omnipay\Model\Message\PaymentMessage:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\OmnipayPaymentMessageExtension'

@@ -7,7 +7,7 @@ Only:
 ## Order model
 SilverShop\Model\Order:
   extensions:
-    - 'NSWDPC\Payments\NSWGOVCPP\Agency\CPPSilvershopOrderExtension'
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\SilvershopOrderExtension'
 ## Membership settings
 SilverShop\Checkout\CheckoutConfig:
   member_creation_enabled: false
