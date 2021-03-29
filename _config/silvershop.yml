@@ -1,0 +1,35 @@
+---
+Name: nswdpc-cpp-silvershop
+Only:
+  moduleexists: silvershop/core
+## CPP handling modification when Silvershop is installed
+---
+## Order model
+SilverShop\Model\Order:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\CPPSilvershopOrderExtension'
+## Membership settings
+SilverShop\Checkout\CheckoutConfig:
+  member_creation_enabled: false
+  membership_required: false
+
+## Default to AU localisation
+SilverStripe\i18n\i18n:
+  default_locale: en_AU
+
+SilverShop\Page\Product:
+  allow_zero_price: true
+  # grams
+  weight_unit: g
+  # millimetres
+  length_unit: mm
+
+SilverShop\Extension\ShopConfigExtension:
+  base_currency: 'AUD'
+  email_from: digital@dpc.nsw.gov.au
+
+SilverShop\ORM\FieldType\ShopCurrency:
+  decimal_delimiter: '.'
+  thousand_delimiter: ','
+  # european style currencies, e.g. 45,00 € instead of €45,00
+  append_symbol: false
