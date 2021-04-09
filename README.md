@@ -1,5 +1,7 @@
 # Silverstripe integration with the NSW Government Customer Payments Platform
 
+> ⚠️ This module is a WIP. Do not use it in production as the API will change.
+
 This module provides support within a Silverstripe install to take payments from citizens for items via the [NSW Government Customer Payments Platform (CPP)](https://cpp-info-hub.service.nsw.gov.au/).
 
 ## Features
