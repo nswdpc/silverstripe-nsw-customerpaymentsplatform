@@ -3,8 +3,6 @@
 namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use SilverStripe\Control\Director;
-
-;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
 
