@@ -74,9 +74,11 @@ class Payment extends DataObject implements PermissionProvider
 
     /**
      * The CPP "callingSystem" string
+     * This must be set to the value provided by the CPP during setup
+     * @todo move to GatewayInfo config parameter?
      * @var string
      */
-    private static $calling_system = 'NSW CPP Payment Client';
+    private static $calling_system = '';
 
     /**
      * User Agent sent with HTTP requests

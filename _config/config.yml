@@ -1,6 +1,8 @@
 ---
 Name: nswdpc-cpp-configuration
 ---
+NSWDPC\Payments\NSWGOVCPP\Agency\Payment:
+  calling_system: ''
 SilverStripe\Omnipay\Model\Payment:
   allowed_gateways:
     - 'NSWGOVCPP'
