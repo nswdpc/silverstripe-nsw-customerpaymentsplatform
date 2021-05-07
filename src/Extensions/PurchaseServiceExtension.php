@@ -72,7 +72,7 @@ class PurchaseServiceExtension extends Extension
             Logger::log("Error: new CPP payment has invalid agency transaction ID '{$cppPayment->AgencyTransactionId}'", "ERROR");
             throw new \RuntimeException(
                 _t(
-                    __CLASS_ . ".NO_AGENCY_TXN_ID",
+                    __CLASS__ . ".NO_AGENCY_TXN_ID",
                     "The payment request failed due to an internal error"
                 )
             );
@@ -84,7 +84,7 @@ class PurchaseServiceExtension extends Extension
             Logger::log("Error: the CPP payment record could not be saved for txn '{$cppPayment->AgencyTransactionId}'", "ERROR");
             throw new \RuntimeException(
                 _t(
-                    __CLASS_ . ".NO_PAYMENT_RECORD_SAVED",
+                    __CLASS__ . ".NO_PAYMENT_RECORD_SAVED",
                     "The payment request failed due to an internal error"
                 )
             );
@@ -128,7 +128,7 @@ class PurchaseServiceExtension extends Extension
             Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid agency transction ID '{$cppPayment->AgencyTransactionId}'", "ERROR");
             throw new \RuntimeException(
                 _t(
-                    __CLASS_ . ".NO_AGENCY_TXN_ID",
+                    __CLASS__ . ".NO_AGENCY_TXN_ID",
                     "The payment request failed due to an internal error"
                 )
             );
@@ -142,7 +142,7 @@ class PurchaseServiceExtension extends Extension
             Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid amount '{$amount}'", "ERROR");
             throw new \RuntimeException(
                 _t(
-                    __CLASS_ . ".INVALID_AMOUNT",
+                    __CLASS__ . ".INVALID_AMOUNT",
                     "The payment request failed due to an internal error"
                 )
             );
@@ -153,7 +153,7 @@ class PurchaseServiceExtension extends Extension
             Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid callingSystem '{$callingSystem}'", "ERROR");
             throw new \RuntimeException(
                 _t(
-                    __CLASS_ . ".INVALID_CALLINGSYSTEM",
+                    __CLASS__ . ".INVALID_CALLINGSYSTEM",
                     "The payment request failed due to an internal error"
                 )
             );
