@@ -169,9 +169,12 @@ class PurchaseServiceExtension extends Extension
             "productDescription" => $productDescription, // mandatory
             "amount" => $amount, // mandatory
             "agencyTransactionId" => $cppPayment->AgencyTransactionId, // mandatory
-            "callingSystem" => $callingSystem, // mandatory
-            "customerReference" => $cppPayment->PayerReference, // optional
+            "callingSystem" => $callingSystem // mandatory
         ];
+        if(!empty($cppPayment->PayerReference)) {
+            // optional, include when set
+            $gatewayData['payload']["customerReference"] = $cppPayment->PayerReference;
+        }
     }
 
     /**
