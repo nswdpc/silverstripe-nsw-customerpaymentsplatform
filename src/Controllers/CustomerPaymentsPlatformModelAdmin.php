@@ -17,7 +17,8 @@ class CustomerPaymentsPlatformModelAdmin extends ModelAdmin
 
     private static $managed_models = [
         Payment::class,
-        OmnipayPayment::class
+        OmnipayPayment::class,
+        Configuration::class
     ];
 
     private static $menu_title = 'CPP';

@@ -2,6 +2,7 @@
 
 namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
+use Omnipay\NSWGOVCPP\AccessToken;
 use Omnipay\NSWGOVCPP\CompletePurchaseRequest;
 use Omnipay\NSWGOVCPP\CompletePurchaseResponse;
 use Omnipay\NSWGOVCPP\PurchaseRequest;
@@ -178,14 +179,84 @@ class PurchaseServiceExtension extends Extension
     }
 
     /**
-     * > onAfterPurchase called just after the Omnipay purchase call.
-     * > Will pass the Omnipay request object as parameter.
+     * This is called after the purchase() method is called, not after an actual purchase
+     * The PurchaseService will pass the Omnipay request object as parameter.
+     * {@link \SilverStripe\Omnipay\ServicePurchaseService::initiate()}
      */
     public function onAfterPurchase(AbstractRequest $request)
     {
         if (!$request instanceof PurchaseRequest) {
             Logger::log("onAfterPurchase does not handle: " . get_class($request));
             return;
+        }
+
+        // Attempt to reuse the stored access token
+        if($token = $this->getStoredAccessToken()) {
+            // use this token for the request
+            $request->setCurrentAccessToken($token);
+        } else if($token = $request->retrieveAccessToken()) {
+            // store this access token (calls setCurrentAccessToken)
+            $this->storeAccessToken($token);
+        }
+
+    }
+
+    /**
+     * Get the current token
+     * if it is valid return.. else return null
+     * @return AccessToken|null
+     */
+    private function getStoredAccessToken() {
+        $record = Configuration::get()->first();
+        $token = null;
+        if($record && $record->exists()) {
+
+            // create a token from the record
+            $token = new AccessToken(
+                $record->AccessTokenValue,
+                intval($record->AccessTokenExpires),
+                $record->AccessTokenType,
+                intval($record->AccessTokenExpiry)
+            );
+
+            // remove all token configurations
+            if(!$token->isValid()) {
+                // reset token
+                $token = null;
+                // remove all configurations
+                $this->clearAccessTokens();
+            }
+
+        }
+        return $token;
+    }
+
+    /**
+     * Remove all configurations
+     */
+    private function clearAccessTokens() {
+        $records = Configuration::get();
+        foreach($records as $record) {
+            $record->delete();
+        }
+    }
+
+    /**
+     * Store a valid access token
+     */
+    private function storeAccessToken(AccessToken $token) {
+        if($token->isValid()) {
+            $this->clearAccessTokens();
+            $record = Configuration::create([
+                'AccessTokenValue' => $token->getToken(),
+                'AccessTokenExpires' => $token->getExpires(),
+                'AccessTokenExpiry' => $token->getExpiry(),
+                'AccessTokenType' => $token->getType()
+            ]);
+            $id = $record->write();
+            return $record->isInDB();
+        } else {
+            return false;
         }
     }
 
@@ -196,8 +267,20 @@ class PurchaseServiceExtension extends Extension
     public function onAfterSendPurchase(AbstractRequest $request, AbstractResponse $response)
     {
         if (!$response instanceof PurchaseResponse) {
-            Logger::log("onAfterSendPurchase does not handle: " . get_class($response));
             return;
+        }
+
+        // Store the request token used in the request, if there is one
+        if($request instanceof PurchaseRequest) {
+            // get the current access token
+            $storedToken = $this->getStoredAccessToken();
+            $requestToken = $request->getCurrentAccessToken();
+            if($requestToken && $storedToken) {
+                // replace the token, if the stored one is invalid
+                $storedToken->replaceIfExpired($requestToken);
+                // store the token
+                $this->storeAccessToken($storedToken);
+            }
         }
 
         // This occurs in the same process as onBeforePurchase - can use the same payment record
