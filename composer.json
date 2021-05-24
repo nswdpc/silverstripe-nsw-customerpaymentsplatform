@@ -41,11 +41,6 @@
     "config": {
         "sort-packages": true
     },
-    "extra": {
-        "expose": [
-            "client/dist"
-        ]
-    },
     "repositories" : [
         {
             "type": "vcs",
