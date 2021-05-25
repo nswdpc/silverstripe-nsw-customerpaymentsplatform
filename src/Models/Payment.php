@@ -264,12 +264,12 @@ class Payment extends DataObject implements PermissionProvider
      * @throws \Exception
      * @return NSWDPC\Payments\NSWGOVCPP\Agency\Payment
      */
-    public static function getByPaymentReference($refId) : Payment
+    public static function getByPaymentReference($paymentReference) : Payment
     {
-        if (empty($refId)) {
+        if (empty($paymentReference)) {
             throw  new \Exception("Cannot get a payment with an empty refId");
         }
-        $payment = Payment::get()->filter(['PaymentReference' => $refId])->first();
+        $payment = Payment::get()->filter(['PaymentReference' => $paymentReference])->first();
         if (!$payment instanceof Payment) {
             throw  new \Exception("Payment not found");
         }
