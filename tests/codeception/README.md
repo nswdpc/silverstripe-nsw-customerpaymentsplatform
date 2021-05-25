@@ -3,9 +3,9 @@
 ## Prerequisites
 
 + These acceptance tests expect Silvershop to be installed
-+ An environment configured
-+ You have [./#Install-chromedriver](installed chromedriver)
-+ You have [./#Start-chromedriver](started chromedriver)
++ You have an environment for testing set up and configured
++ You have [installed chromedriver](./#Install-chromedriver)
++ You have [started chromedriver](./#Start-chromedriver)
 
 ### Environment
 
@@ -81,7 +81,7 @@ paths:
 Then run the tests:
 
 Run codeception from the **project** directory
-```
+```shell
 ./vendor/bin/codecept run
 ```
 
