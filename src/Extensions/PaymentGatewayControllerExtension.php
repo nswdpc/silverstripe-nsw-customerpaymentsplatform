@@ -67,6 +67,9 @@ class PaymentGatewayControllerExtension extends Extension
         $status = strtolower($request->param('Status'));
         switch ($status) {
             case 'cancel':
+
+                Logger::log("Cancel payment requested", "DEBUG");
+
                 /**
                  * customer has chosen to cancel the payment
                  * the CPP will redirect the customer back here
@@ -85,6 +88,7 @@ class PaymentGatewayControllerExtension extends Extension
                 }
 
                 // mark the CPP payment as cancelled
+                Logger::log("Mark cppPayment cancelled", "DEBUG");
                 $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_CANCELLED;
                 $cppPayment->write();
 
@@ -92,6 +96,7 @@ class PaymentGatewayControllerExtension extends Extension
                 if ($payment instanceof OmnipayPayment) {
                     $payment->Status = 'PendingPurchase';
                     $payment->write();
+                    Logger::log("Returning OmnipayPayment after cancelled payment", "DEBUG");
                     return $payment;
                 }
 
