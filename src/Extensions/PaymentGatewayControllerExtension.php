@@ -22,10 +22,24 @@ class PaymentGatewayControllerExtension extends Extension
     /**
      * > updatePaymentActionFromRequest called for every request to the PaymentGatewayController.
      * > Can be used to set the payment action from the incoming request-data. Sometimes needed for static routes
+     *
+     * Only the CPP 'cancel' and 'success' actions are supported
      */
-    public function updatePaymentActionFromRequest(string $action, OmnipayPayment $payment, HTTPRequest $request)
+    public function updatePaymentActionFromRequest(&$action, OmnipayPayment $payment, HTTPRequest $request)
     {
-        Logger::log("updatePaymentActionFromRequest:" . $action);
+        switch($action) {
+            case 'cancel':
+                // payer cancelled the payment, internal action is also called 'cancel'
+                $action = 'cancel';
+                break;
+            case 'success':
+                // successful payment made by payer, translate to internal action 'complete'
+                $action ='complete';
+                break;
+            default:
+                // default to no action, should trigger a 404 error
+                $action = '';
+        }
     }
 
     /**
@@ -43,7 +57,7 @@ class PaymentGatewayControllerExtension extends Extension
 
         /*
          * Silently ignore requests for non NSWGOVCPP gateway
-          * This can occur if another payment gateway is in uss
+          * This can occur if another payment gateway is in use
          */
         if (!$gateway || $gateway != Payment::CPP_GATEWAY_CODE) {
             return;
@@ -58,30 +72,97 @@ class PaymentGatewayControllerExtension extends Extension
                  * the CPP will redirect the customer back here
                  * need to store a status and redirect the customer to their order
                  */
+                $paymentReference = $request->getVar('paymentReference');
+                if (!$paymentReference) {
+                    Logger::log("Cancel payment request but no 'paymentReference' query string value provided", "NOTICE");
+                    return $this->owner->httpError(400, "No payment reference supplied");
+                }
+                // get payment based on paymentReference
+                $cppPayment = Payment::getByPaymentReference($paymentReference);
+                if (!$cppPayment || !$cppPayment->isInDB()) {
+                    Logger::log("Cancelled payment with PaymentReference={$paymentReference} but no matching CppPayment record found for this value", "WARNING");
+                    return $this->owner->httpError(406, "Not Acceptable");
+                }
+
+                // mark the CPP payment as cancelled
+                $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_CANCELLED;
+                $cppPayment->write();
+
+                $payment = $cppPayment->OmnipayPayment();
+                if ($payment instanceof OmnipayPayment) {
+                    $payment->Status = 'PendingPurchase';
+                    $payment->write();
+                    return $payment;
+                }
+
+                Logger::log("Cancelled payment with PaymentReference={$paymentReference} but no matching OmnipayPayment record found for CppPayment #{$cppPayment}", "WARNING");
+                return $this->owner->httpError(406, "Not Acceptable");
+
                 break;
+
             case 'success':
+
                 /**
                  * customer sucessfully made the payment
-                 * the CPP will redirect the customer back here, after complete() below
-                 * was requested by the CPP
-                 * need to store a status and redirect the customer to their order
+                 * the CPP will redirect the customer back here, after the 'complete' request is made by the CPP gateway
                  */
+
+                 $paymentReference = $request->getVar('paymentReference');
+                 if (!$paymentReference) {
+                     Logger::log("Successful payment request but no 'paymentReference' query string value provided", "NOTICE");
+                     return $this->owner->httpError(400, "No payment reference supplied");
+                 }
+                 // get payment based on paymentReference
+                 $cppPayment = Payment::getByPaymentReference($paymentReference);
+                 if (!$cppPayment || !$cppPayment->isInDB()) {
+                     Logger::log("Successful payment with PaymentReference={$paymentReference} but no matching CppPayment record found for this value", "WARNING");
+                     return $this->owner->httpError(406, "Not Acceptable");
+                 }
+
+                 // for a successful payment to be received, the payment record must have the values
+                 // saved from the 'complete' request
+                 if(empty($cppPayment->PaymentCompletionReference)) {
+                     Logger::log("Successful payment with PaymentReference={$paymentReference} has no PaymentCompletionReference", "WARNING");
+                     return $this->owner->httpError(406, "Not Acceptable");
+                 }
+
+                 if(empty($cppPayment->PaymentMethod)) {
+                     Logger::log("Successful payment with PaymentReference={$paymentReference} has no PaymentMethod", "WARNING");
+                     return $this->owner->httpError(406, "Not Acceptable");
+                 }
+
+                 // mark the CPP payment as completed
+                 $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_COMPLETED;
+                 $cppPayment->write();
+
+                 $payment = $cppPayment->OmnipayPayment();
+                 if ($payment instanceof OmnipayPayment) {
+                     // return the payment
+                     $payment->Status = 'PendingPurchase';
+                     $payment->write();
+                     return $payment;
+                 }
+
+                 Logger::log("Successful payment with PaymentReference={$paymentReference} but no matching OmnipayPayment record found for CppPayment #{$cppPayment}", "WARNING");
+                 return $this->owner->httpError(406, "Not Acceptable");
+
                 break;
+
             case 'complete':
 
                 try {
-
-                    // default error message
-                    $errorMessage = $externalErrorMessage = '';
-
-                    // get all parameters for the gateway
-                    $parameters = GatewayInfo::getConfigSetting($gateway, 'parameters');
 
                     /**
                      * CPP makes the completion call to the configured agency endpoint after
                      * the payment has been successfully made.
                      * The response has a JWT which should be verified with the key shared with the agency.
                      */
+
+                    // default error message
+                    $errorMessage = $externalErrorMessage = '';
+
+                    // get all parameters for the gateway
+                    $parameters = GatewayInfo::getConfigSetting($gateway, 'parameters');
 
                     // decode the JWT sent back from CPP containing payment information
                     $jwtPublicKey = $parameters['jwtPublicKey'] ?? '';
@@ -134,6 +215,8 @@ class PaymentGatewayControllerExtension extends Extension
                     $cppPayment->write();
 
                     if ($payment instanceof OmnipayPayment) {
+                        $payment->Status = 'PendingPurchase';
+                        $payment->write();
                         return $payment;
                     }
 
@@ -185,5 +268,7 @@ class PaymentGatewayControllerExtension extends Extension
                 return;
                 break;
         } // end switch
-    }
+
+    } // updatePaymentFromRequest
+
 }
