@@ -163,6 +163,9 @@ class PaymentGatewayControllerExtension extends Extension
                      * The response has a JWT which should be verified with the key shared with the agency.
                      */
 
+                    // default response code
+                    $code = 503;
+
                     // default error message
                     $errorMessage = $externalErrorMessage = '';
 
