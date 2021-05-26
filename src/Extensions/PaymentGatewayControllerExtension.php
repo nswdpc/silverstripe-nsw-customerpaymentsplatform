@@ -185,7 +185,7 @@ class PaymentGatewayControllerExtension extends Extension
                     }
 
                     $leeway = 60;//@todo configurable
-                    $algos = ["RS256"];//@todo configurable?
+                    $algos = ["HS256","RS256"];//@todo configurable?
                     // @throws JWTDecodeException|UnprocessableEntityException
                     $output = JWTProcessor::decode($jwt, $jwtPublicKey, $algos, $leeway);
 
