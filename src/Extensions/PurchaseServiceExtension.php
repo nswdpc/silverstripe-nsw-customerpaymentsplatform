@@ -307,48 +307,4 @@ class PurchaseServiceExtension extends Extension
         $cppPayment->write();
     }
 
-    /**
-     * > onBeforeCompletePurchase called just before the completePurchase call is being made to the gateway.
-     * > Passes the Gateway-Data (an array) as parameter, which allows you to modify the gateway data prior to being sent.
-     */
-    public function onBeforeCompletePurchase(array &$gatewayData)
-    {
-        $payment = $this->owner->getPayment();
-        if (!$payment || !$payment instanceof OmnipayPayment || !$payment->isInDB()) {
-            Logger::log("onBeforeCompletePurchase OmnipayPayment instance is not valid");
-            return ;
-        }
-        if ($payment->Gateway != Payment::CPP_GATEWAY_CODE) {
-            Logger::log("onBeforeCompletePurchase does not handle gateway: {$payment->Gateway}");
-            return ;
-        }
-
-        // set the JWT as an empty string
-        $gatewayData['jwt'] = '';
-        Logger::log("onBeforeCompletePurchase starts");
-        if (Controller::has_curr()) {
-            // retrieve the JWT from the request
-            $controller = Controller::curr();
-            $request = $controller->getRequest();
-            $body = $request->getBody();
-            Logger::log("onBeforeCompletePurchase got JWT ");
-            $decoded =  json_decode($body, true, JSON_THROW_ON_ERROR);
-            $token = $decoded['token'] ?? '';
-            // will call setJwt()  on the gateway request
-            $gatewayData['jwt'] = $token;
-        }
-    }
-
-    /**
-     * > onAfterCompletePurchase called just after the Omnipay completePurchase call.
-     * > Will pass the Omnipay request object as parameter.
-     */
-    public function onAfterCompletePurchase(AbstractRequest $request)
-    {
-        if (!$request instanceof CompletePurchaseRequest) {
-            // this extension only handles CompletePurchaseRequest instances
-            Logger::log("onAfterCompletePurchase does not handle: " . get_class($request));
-            return;
-        }
-    }
 }

@@ -4,6 +4,10 @@ namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
 use SilverStripe\ORM\DataExtension;
 
+/**
+ * Message extension for CPP
+ * @author James
+ */
 class OmnipayPaymentMessageExtension extends DataExtension {
 
     public function updateSummaryFields(&$fields) {

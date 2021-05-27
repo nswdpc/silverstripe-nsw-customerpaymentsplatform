@@ -31,6 +31,21 @@ class OmnipayPaymentExtension extends DataExtension
         'CppPayment' => Payment::class . ".OmnipayPayment"
     ];
 
+    /**
+     * Create a Purchase service for CPP payment response handling
+     * @return CPPPurchaseService|false
+     */
+    public function createPurchaseService() {
+        // if the gateway is not the CPP gateway, no ServiceResponse is returned
+        if($this->owner->Gateway != Payment::CPP_GATEWAY_CODE ) {
+            return false;
+        }
+        return new CPPPurchaseService( $this->owner );
+    }
+
+    /**
+     * Update CMS fields based on existence of Silvershop
+     */
     public function updateCMSFields(FieldList $fields)
     {
         if(class_exists(SilvershopOrder::class)) {
@@ -51,58 +66,6 @@ class OmnipayPaymentExtension extends DataExtension
             );
 
         }
-    }
-
-    /**
-     * onCaptured - called from markCompleted
-     * "onCaptured called when a payment was successfully captured. You'll get the ServiceResponse as parameter."
-     */
-    public function onCaptured(ServiceResponse &$serviceResponse)
-    {
-        Logger::log("onCaptured starts");
-        $omnipayResponse = $serviceResponse->getOmnipayResponse();
-        if (!$omnipayResponse instanceof CompletePurchaseResponse) {
-            Logger::log("onCaptured does not handle: " . get_class($omnipayResponse));
-            return;
-        }
-        /**
-         * Callback to handle payment completion
-         */
-        $callback = function (CompletePurchaseResponse $completePurchaseResponse) {
-            Logger::log("onCaptured within callback");
-            return true;
-        };
-
-        Logger::log("onCaptured completing");
-        /* @var Response */
-        $response = $omnipayResponse->complete($callback);
-
-        Logger::log("onCaptured complete called");
-
-        // upon completion, set an HTTP response based on what happened in complet()
-        $httpResponse = HTTPResponse::create();
-        $httpResponse->setStatusCode($response->getStatusCode());
-
-        Logger::log("onCaptured setting status code " . $response->getStatusCode());
-
-        $serviceResponse->setHttpResponse($httpResponse);
-
-        Logger::log("onCaptured set HTTPResponse on ServiceResponse");
-    }
-
-    /**
-     * > onAwaitingCaptured called when a purchase completes, but is waiting for an asynchronous notification from the gateway.
-     * > You'll get the ServiceResponse as parameter.
-     */
-    public function onAwaitingCaptured(ServiceResponse &$serviceResponse)
-    {
-        Logger::log("onAwaitingCaptured starts");
-        $omnipayResponse = $serviceResponse->getOmnipayResponse();
-        if (!$omnipayResponse instanceof CompletePurchaseResponse) {
-            Logger::log("onAwaitingCaptured does not handle: " . get_class($omnipayResponse));
-            return;
-        }
-        return $this->onCaptured($serviceResponse);
     }
 
     /**
