@@ -9,7 +9,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Config\Config;
 
-require_once(dirname(__FILE__) . '/TestJWTHandling.php');
+require_once(dirname(__FILE__) . '/support/TestJWTHandling.php');
 
 class PaymentTest extends SapphireTest {
 
