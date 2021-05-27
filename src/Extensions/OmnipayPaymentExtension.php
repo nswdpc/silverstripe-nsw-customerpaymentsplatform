@@ -32,6 +32,37 @@ class OmnipayPaymentExtension extends DataExtension
     ];
 
     /**
+     * @return bool
+     */
+    public function hasException() : bool {
+        $this->owner->exception = $e;
+    }
+
+    /**
+     * @param \Exception
+     */
+    public function setException(\Exception $e) {
+        $this->owner->exception = $e;
+    }
+
+    /**
+     * @return \Exception
+     */
+    public function getException() : \Exception {
+        return $this->owner->exception;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function onBeforeWrite()
+    {
+        if($this->owner->hasException()) {
+            throw new \Exception("Cannot write a payment record that has an exception");
+        }
+    }
+
+    /**
      * Create a Purchase service for CPP payment response handling
      * @return CPPPurchaseService|false
      */
