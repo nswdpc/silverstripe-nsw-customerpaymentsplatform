@@ -5,6 +5,7 @@ namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 use Omnipay\NSWGOVCPP\JWTProcessor;
 use Omnipay\NSWGOVCPP\JWTDecodeException;
 use Omnipay\NSWGOVCPP\UnprocessableEntityException;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Omnipay\GatewayInfo;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,11 +22,11 @@ class PaymentCompletionService
      * HTTP response code to be set back to the CPP
      *
      * @param string $body the JSON encoded POST body
-     * @param string $jwtPublicKey the public key to be used when attempting decode
+     * @param string $jwtPublicKey the public key to be used when attempting decode, if not set the Gateway configuration value is used
      * @return array
      * @throws \Exception|\Omnipay\NSWGOVCPP\JWTDecodeException|\Omnipay\NSWGOVCPP\UnprocessableEntityException
      */
-    public static function handle(string $body, string $jwtPublicKey, array $jwtAlgos = ['RS256']) : array {
+    public static function handle(string $body, string $jwtPublicKey = '', array $jwtAlgos = ['RS256']) : array {
 
         if(empty($body)) {
             throw new UnprocessableEntityException("Empty payment completion body");
@@ -45,19 +46,23 @@ class PaymentCompletionService
         }
 
         // Use the gateway to decode and gather data
-        $gateway = $this->getGatewayFactory()->create(Payment::CPP_GATEWAY_CODE);
-        $parameters = GatewayInfo::getParameters(Payment::CPP_GATEWAY_CODE);
-        // proivde the gateway with the token
-        $gatewayData['jwt'] = $token;
-        if (is_array($parameters)) {
-            $gateway->initialize($parameters);
+        $gatewayFactory = Injector::inst()->get('Omnipay\Common\GatewayFactory');
+        $gateway = $gatewayFactory->create(Payment::CPP_GATEWAY_CODE);
+        $config = GatewayInfo::getParameters(Payment::CPP_GATEWAY_CODE);
+        if($jwtPublicKey) {
+            $config['jwtPublicKey'] = $jwtPublicKey;// ensure the JWT public key provided is set
         }
+        $gateway->initialize($config);
 
-        $completePurchaseRequest = $gateway->completePurchase();
+        $parameters = [];
+        // proivde the gateway with the token
+        $parameters['jwt'] = $decoded['token'];
+
+        $completePurchaseRequest = $gateway->completePurchase($parameters);
         /* @var CompletePurchaseResponse */
-        $completePurchaseResponse = $request->send();
+        $completePurchaseResponse = $completePurchaseRequest->send();
         /* @var Response */
-        $response = $response->complete();
+        $response = $completePurchaseResponse->complete();
         /* @var array */
         $data = $completePurchaseResponse->getData();
 
