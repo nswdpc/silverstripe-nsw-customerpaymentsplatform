@@ -67,7 +67,7 @@ class PaymentGatewayControllerExtension extends Extension
      * > updatePaymentFromRequest called for every request that goes to the PaymentGatewayController.
      * > Can be used to return a Payment object from the request data. Needed for enabling static routes
 
-     * @return false|OmnipayPayment|FailedOmnipayPayment
+     * @return false|OmnipayPayment
      */
     public function updatePaymentFromRequest(HTTPRequest $request, $gateway = null)
     {
@@ -254,7 +254,7 @@ class PaymentGatewayControllerExtension extends Extension
             } // end switch
 
         } catch (\Exception $e) {
-            // on error return a {@link FailedOmnipayPayment}
+            // on error return a {@link OmnipayPayment}
             Logger::log("CPP gateway extension exception: " . $e->getMessage());
             return $this->getFailedOmnipayPayment($e);
         }
@@ -266,10 +266,10 @@ class PaymentGatewayControllerExtension extends Extension
      * This is required to trigger the correct response to the CPP gateway
      * {@link PaymentGatewayController::getPaymentFromRequest}
      * {@link PaymentGatewayController::createPaymentResponse}
-     * @return FailedOmnipayPayment
+     * @return OmnipayPayment
      */
-    private function getFailedOmnipayPayment(\Exception $e) : FailedOmnipayPayment {
-        $payment = FailedOmnipayPayment::create([
+    private function getFailedOmnipayPayment(\Exception $e) : OmnipayPayment {
+        $payment = OmnipayPayment::create([
             // trigger a payment intent of ServiceFactory::INTENT_PURCHASE
             // ServiceResponse = SilverStripe\Omnipay\Service\PurchaseService
             'Status' => 'PendingPurchase'
