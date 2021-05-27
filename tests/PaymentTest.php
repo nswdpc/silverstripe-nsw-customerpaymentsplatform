@@ -87,7 +87,7 @@ class PaymentTest extends SapphireTest {
             $testJWT->getVal('jwtPublicKey')
         );
 
-        $this->assertNotEmpty( $output->paymentCompletionReference );
+        $this->assertNotEmpty( $output['paymentCompletionReference'] );
 
     }
 
