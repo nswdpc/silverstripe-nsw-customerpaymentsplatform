@@ -31,9 +31,9 @@ class CPPPurchaseService extends PurchaseService
     {
         Logger::log('CPPPurchaseService: complete');
 
-        if($this->payment instanceof FailedOmnipayPayment) {
+        if($this->payment->hasException()) {
             // A payment failure was encountered
-            Logger::log('CPPPurchaseService: FailedOmnipayPayment');
+            Logger::log('CPPPurchaseService: failed OmnipayPayment has an exception');
             /**
              * Return a response with the relevant error code from the exception
              * Response could be for:
@@ -43,10 +43,12 @@ class CPPPurchaseService extends PurchaseService
             $exception = $this->payment->getException();
             // create the appropriate response
             $response = HTTPResponse::create();
-            $response->setStatusCode($exception->getCode());
+            $code = $exception->getCode();
+            $response->setStatusCode($code);
             // create a service response with the applicable HTTP code
             $serviceResponse = new ServiceResponse($this->payment, ServiceResponse::SERVICE_ERROR);
             $serviceResponse->setHttpResponse($response);
+            Logger::log('CPPPurchaseService: failed OmnipayPayment response code=' . $code);
         } else if ($this->payment->Status == 'Captured') {
             // complete or success
             if($isNotification) {
