@@ -48,24 +48,37 @@ class Payment extends DataObject implements PermissionProvider
      * CPP payment status constants
      *  https://documenter.getpostman.com/view/7222098/SzfCSkTn?version=latest#b3232197-dd91-4698-8c0f-8af5270390b6
      */
+
     // Agency has requested the payment but customer hasn't initiated the payment
     const CPP_PAYMENTSTATUS_REQUESTED = 'REQUESTED';
+
     // Agency has requested the payment but customer hasn't initiated the payment
     const CPP_PAYMENTSTATUS_INITIALISED  = 'INITIALISED';
+
     // Payment in progress
     const CPP_PAYMENTSTATUS_IN_PROGRESS  = 'IN_PROGRESS';
-    // Customer has paid
+
+    // Customer has paid (prior to 'complete' with JWT request)
     const CPP_PAYMENTSTATUS_PAID  = 'PAID';
+
     // Customer has paid and CPP has notified the agency successfully
     const CPP_PAYMENTSTATUS_COMPLETED  = 'COMPLETED';
+
     // Payment Voided
     const CPP_PAYMENTSTATUS_VOIDED  = 'VOIDED';
+
     // Refund has been requested and is in progress
     const CPP_PAYMENTSTATUS_REFUND_REQUESTED = 'REFUND_REQUESTED';
+
     // Refund has been applied
     const CPP_PAYMENTSTATUS_REFUND_APPLIED = 'REFUND_APPLIED';
+
     // Payment cancelled
     const CPP_PAYMENTSTATUS_CANCELLED = 'CANCELLED';
+
+    // (internal client status)
+    const CPP_PAYMENTSTATUS_CLIENT_ACTION_SUCCESS = 'CLIENT_ACTION_SUCCESS';
+
     // ANY OTHER STATUS - Payment hasn't been successful
 
     private static $table_name = 'CppPayment';
