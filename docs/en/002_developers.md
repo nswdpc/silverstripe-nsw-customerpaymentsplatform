@@ -1,10 +1,10 @@
-# Develooers
+# Developers
 
 ## Taking payments
 
 All payment processing is handled by the `nswdpc/omnipay-nswcpp` library acting as a configured gateway within the official `silverstripe/silverstripe-omnipay` module.
 
-Payments are taken at the CPP Gateway, which in turn provides a controller with a payment completion request.
+Payments are taken at the CPP Gateway, which in turn POSTs a payment completion request to the agency website with payment data using a JWT.
 
 ## Refunding payments
 
@@ -13,28 +13,23 @@ The module supports refunding of payments. See [the agent documentation](./003_a
 
 ## Models
 
-The module provides 5 models:
+The module provides 2 models:
 
-+ Payment - representing a CPP payment
-+ Disbursement - representing a disbursement when making sub agency payments within the CPP
-+ PaymentMethod - one of the support CPP payment methods
-+ Refund - representing a refund.
++ Payment - representing a CPP payment, linked to a `\SilverStripe\Omnipay\Model\Payment`
++ :warning: Disbursement - representing a disbursement when making sub agency payments within the CPP (todo)
 
 ### Payment
 
-A payment is linked to the `SilverStripe\Omnipay\Model\Payment` model. Data within the payment model is updated as a payment progresses:
+A CPP payment is linked to the `SilverStripe\Omnipay\Model\Payment` model. Data within the payment model is updated as a payment progresses.
 
-When authorisation occurs:
-1. onBeforeAuthorize
-1. onAfterAuthorize
-
-When authorisation completes:
-1. onBeforeCompleteAuthorize
-1. onAfterCompleteAuthorize
-
-When a payment completion POST request is received
-1. onBeforeCompletePurchase
-1. onAfterCompletePurchase
+1. A payment request is made to the CPP, returning a `paymentReference`
+1. The payment stores the `paymentReference` value
+1. The payer is redirected, with that paymentReference value, to the CPP gateway 
+    1. The payer can cancel at this point
+1. The payer processes their payment using the relevant payment method
+    1. Upon successful payment, the CPP sends a JWT to the agency website, which is decoded,validated and responded to.
+    1. Successful payments are then automatically redirected to the configured payment success URL on the agency website
+1. Upon unsuccessful payment or cancellation, the payer can retry or cancel and return to the agency website, possibly to try again.
 
 ### Disbursement
 
@@ -60,7 +55,19 @@ The `SilverStripe\Omnipay\PaymentGatewayController` controller provides handling
 
 This URL is provided to the CPP which will send a POST request upon successful payment by the customer:
 
-https://example.com/gateway/NSWGOVCPP/complete
+https://agency.example.com/gateway/NSWGOVCPP/complete/
+
+### Payment success request
+
+This URL is provided to the CPP. After successful payment, the payer's browser will be directed to this URL
+
+https://agency.example.com/gateway/NSWGOVCPP/success/
+
+### Payment cancel request
+
+This URL is provided to the CPP. if the payer cancels the payment request, the payer's browser will be directed to this URL
+
+https://agency.example.com/gateway/NSWGOVCPP/success/
 
 ### Retrieve an access token
 

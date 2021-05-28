@@ -8,11 +8,17 @@ This module provides support within a Silverstripe install to take payments from
 
 + A payments administration area
 + Refund options
-+ Disbursements (sub agencies)
++ TODO: Disbursements (sub agencies)
 + Payment completion endpoint
-+ A payments form
++ Payment cancel/success handling
 
-You can install this module standalone and integrate it yourself or as part of a [Silvershop](https://github.com/silvershop/silvershop-core) install.
+## Requisites
+
+To take payments with this module, you must
+
+- have an approved Agency account within the CPP
+- be able to configure the provided OAuth2 client-id and client-secret + your JWT secret key within a Silverstripe install
+- have an appropriate post-payment product fulfilment process
 
 ## Omnipay resources
 
@@ -22,15 +28,13 @@ You can install this module standalone and integrate it yourself or as part of a
 
 ## Requirements
 
-+ nswdpc/omnipay-nswcpp - provides a gateway to the Customer Payments platform, including payment completion and refund handling
-+ omnipay/common - Core components for the Omnipay PHP payment processing library
-+ silverstripe/silverstripe-omnipay - the official Omnipay integration with Silverstripe
-
+See [composer.json](./composer.json)
 
 ## Roadmap
 
 + User defined form integration
 + End of day reconciliation job
++ Disbursements (sub agencies)
 
 ### Installation
 
@@ -40,13 +44,17 @@ The only supported method of installing this module and its requirements is via 
 composer require nswdpc/silverstripe-nsw-customerpaymentsplatform
 ```
 
-## Requisites
+## Shop and checkout handling
 
-To take payments with this module, you must
+You can install this module standalone and integrate it into your own shop/checkout process or use it as part of a [Silvershop](https://github.com/silvershop/silvershop-core) install.
 
-- have an approved Agency account within the CPP
-- be able to configure the provided OAuth2 client-id and client-secret + your JWT secret key within a Silverstripe install
-- have an appropriate post-payment product fulfilment process
+At this point, we recommend using this module with [silvershop/core](https://github.com/silvershop/silvershop-core) as a requirement in your project's composer.json
+
+```shell
+composer require nswdpc/silverstripe-nsw-customerpaymentsplatform silvershop/core:^3
+```
+
+The module ships a default silvershop configuration that can be modified at your project's level.
 
 ## License
 
@@ -58,7 +66,7 @@ This module is made available as an Open Source project under the [BSD-3-Clause]
 
 ## Configuration
 
-Configuration is completed per-environment using the `SilverStripe\Omnipay\GatewayInfo` convention:
+A [base configuration is available](./_config/config.yml). Further project configuration can be completed per-environment:
 
 ```yml
 ---
@@ -67,6 +75,11 @@ Name: 'app-cpp-payments'
 After:
     - '#nswdpc-cpp-configuration'
 ---
+NSWDPC\Payments\NSWGOVCPP\Agency\Payment:
+  calling_system: '<your CPP calling system name>'
+SilverStripe\Omnipay\Model\Payment:
+  allowed_gateways:
+    - 'NSWGOVCPP'
 SilverStripe\Omnipay\GatewayInfo:
   NSWGOVCPP:
     parameters:
@@ -77,6 +90,7 @@ SilverStripe\Omnipay\GatewayInfo:
       requestPaymentUrl: 'https://payment.example.com/request'
       gatewayUrl: 'https://payment.example.com/pay'
       refundUrl: 'https://payment.example.com/refund'
+      dailyReconciliationUrl: 'https://payment.example.com/dailyreconciliation'
       testMode: false
 ```
 
