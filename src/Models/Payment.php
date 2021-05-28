@@ -179,7 +179,7 @@ class Payment extends DataObject implements PermissionProvider
         'PaymentMethod' => true,
         'PaymentReference' => [ 'type' => 'unique', 'columns' => ['PaymentReference'] ],
         'RefundReference' => [ 'type' => 'unique', 'columns' => ['RefundReference'] ],
-        'PaymentCompletionReference' => true,
+        'PaymentCompletionReference' => [ 'type' => 'unique', 'columns' => ['PaymentCompletionReference'] ],
         'BankReference' => true,
         'AmountAmount' => true,
         'RefundAmountAmount' => true,
@@ -263,11 +263,11 @@ class Payment extends DataObject implements PermissionProvider
     public static function getByAgencyTransactionId($txnId) : Payment
     {
         if (empty($txnId)) {
-            throw  new \Exception("Cannot get a payment with an empty txnId");
+            throw new \Exception("Cannot get a payment with an empty txnId");
         }
         $payment = Payment::get()->filter(['AgencyTransactionId' => $txnId])->first();
         if (!$payment instanceof Payment) {
-            throw  new \Exception("Payment not found");
+            throw new \Exception("Payment not found");
         }
         return $payment;
     }
@@ -280,11 +280,28 @@ class Payment extends DataObject implements PermissionProvider
     public static function getByPaymentReference($paymentReference) : Payment
     {
         if (empty($paymentReference)) {
-            throw  new \Exception("Cannot get a payment with an empty refId");
+            throw new \Exception("Cannot get a payment with an empty paymentReference");
         }
         $payment = Payment::get()->filter(['PaymentReference' => $paymentReference])->first();
         if (!$payment instanceof Payment) {
-            throw  new \Exception("Payment not found");
+            throw new \Exception("Payment not found");
+        }
+        return $payment;
+    }
+
+    /**
+     * PaymentCompletionReference is unique, return the record that matches
+     * @throws \Exception
+     * @return NSWDPC\Payments\NSWGOVCPP\Agency\Payment
+     */
+    public static function getByPaymentCompletionReference($paymentCompletionReference) : Payment
+    {
+        if (empty($paymentCompletionReference)) {
+            throw new \Exception("Cannot get a payment with an empty paymentCompletionReference");
+        }
+        $payment = Payment::get()->filter(['PaymentCompletionReference' => $paymentCompletionReference])->first();
+        if (!$payment instanceof Payment) {
+            throw new \Exception("Payment not found");
         }
         return $payment;
     }

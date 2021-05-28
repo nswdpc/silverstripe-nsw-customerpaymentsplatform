@@ -145,7 +145,7 @@ class PaymentFunctionalTest extends FunctionalTest {
         $cppPayment->write();
 
         $path = '/paymentendpoint/gateway/NSWGOVCPP/success/';
-        $path .= "?paymentReference=" . $cppPayment->PaymentReference;
+        $path .= "?completionReference=" . $cppPayment->PaymentCompletionReference;
 
         $this->assertNotEmpty($path);
 

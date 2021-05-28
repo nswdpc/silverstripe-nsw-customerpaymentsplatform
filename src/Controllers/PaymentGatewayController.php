@@ -162,7 +162,7 @@ class PaymentGatewayController extends OmnipayPaymentGatewayController
                 $response->redirect($omnipayPayment->FailureUrl, Response::HTTP_MOVED_PERMANENTLY);
                 break;
             default:
-                // Unhandled status - 406
+                // Unhandled status - 422
                 return $this->failOver(
                     new UnprocessableEntityException("Error: cannot complete CPP #{$cppPayment->ID}/{$cppPayment->PaymentStatus}/payment #{$omnipayPayment->ID}/status={$omnipayPayment->Status}"),
                     _t(
@@ -270,7 +270,7 @@ class PaymentGatewayController extends OmnipayPaymentGatewayController
                 }
 
                 Logger::log("Cancelled payment with PaymentReference={$paymentReference} but no matching OmnipayPayment record found for CppPayment #{$cppPayment}", "WARNING");
-                throw new \Exception("CPP payment has no Omnipay record", 404);
+                throw new \Exception("CPP payment has no Omnipay record", Response::HTTP_NOT_FOUND);
 
                 break;
 
@@ -285,37 +285,33 @@ class PaymentGatewayController extends OmnipayPaymentGatewayController
                  * the CPP will redirect the customer back here, after the 'complete' request is made by the CPP gateway
                  */
 
-                 $paymentReference = $request->getVar('paymentReference');
-                 if (!$paymentReference) {
-                     Logger::log("Successful payment request but no 'paymentReference' query string value provided", "NOTICE");
+                 $completionReference = $request->getVar('completionReference');
+                 if (!$completionReference) {
+                     Logger::log("Successful payment request but no 'completionReference' query string value provided", "NOTICE");
                      // Bad request
-                     throw new \Exception("Success request: no payment reference supplied", 400);
+                     throw new \Exception("Success request: no payment reference supplied", Response::HTTP_BAD_REQUEST);
                  }
 
                  // get payment based on paymentReference
-                 $cppPayment = Payment::getByPaymentReference($paymentReference);
+                 $cppPayment = Payment::getByPaymentCompletionReference($completionReference);
                  if (!$cppPayment || !$cppPayment->isInDB()) {
-                     Logger::log("Successful payment with paymentReference={$paymentReference} but no matching CppPayment record found for this value", "WARNING");
+                     Logger::log("Successful payment with completionReference={$completionReference} but no matching CppPayment record found for this value", "WARNING");
                      // Payment not found
-                     throw new \Exception("Success request: no payment found for paymentReference provided", 404);
-                 }
-
-                 // for a successful payment to be received, the payment record must have the values
-                 // saved from the 'complete' request
-                 if(empty($cppPayment->PaymentCompletionReference)) {
-                     Logger::log("Successful payment with PaymentReference={$paymentReference} has no PaymentCompletionReference", "WARNING");
-                     throw new \Exception("Success request: no PaymentCompletionReference found for paymentReference provided", 404);
+                     throw new \Exception("Success request: no payment found for completionReference provided", Response::HTTP_NOT_FOUND);
                  }
 
                  if(empty($cppPayment->PaymentMethod)) {
                      Logger::log("Successful payment with PaymentReference={$paymentReference} has no PaymentMethod", "WARNING");
-                     throw new \Exception("Success request: no PaymentMethod found for paymentReference provided", 404);
+                     throw new \Exception("Success request: no PaymentMethod found for paymentReference provided", Response::HTTP_NOT_FOUND);
                  }
 
                  $payment = $cppPayment->OmnipayPayment();
                  if ($payment instanceof OmnipayPayment) {
                      if($payment->Status != 'Captured') {
-                          throw new \Exception("Cannot mark CPP payment as successfully completed when not mark captured, has it been processed by the 'complete' handler?", 409);
+                          throw new \Exception(
+                              "Cannot mark CPP payment as successfully completed when not mark captured, has it been processed by the 'complete' handler?",
+                              Response::HTTP_CONFLICT
+                          );
                      } else {
                           // Mark the CPP payment as having received the success action request
                           $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_CLIENT_ACTION_SUCCESS;
@@ -324,8 +320,8 @@ class PaymentGatewayController extends OmnipayPaymentGatewayController
                      }
                  }
 
-                 Logger::log("Successful payment with PaymentReference={$paymentReference} but no matching OmnipayPayment record found for CppPayment #{$cppPayment}", "WARNING");
-                 throw new \Exception("Success request: no Omnipay Payment record found for matched CPP payment", 404);
+                 Logger::log("Successful payment with PaymentReference={$cppPayment->PaymentReference} but no matching OmnipayPayment record found for CppPayment #{$cppPayment}", "WARNING");
+                 throw new \Exception("Success request: no Omnipay Payment record found for matched CPP payment", Response::HTTP_NOT_FOUND);
 
                 break;
 
