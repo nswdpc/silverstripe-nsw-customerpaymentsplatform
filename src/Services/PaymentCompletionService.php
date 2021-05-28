@@ -2,6 +2,7 @@
 
 namespace NSWDPC\Payments\NSWGOVCPP\Agency;
 
+use Omnipay\Common\GatewayFactory;
 use Omnipay\NSWGOVCPP\JWTProcessor;
 use Omnipay\NSWGOVCPP\JWTDecodeException;
 use Omnipay\NSWGOVCPP\UnprocessableEntityException;
@@ -46,7 +47,7 @@ class PaymentCompletionService
         }
 
         // Use the gateway to decode and gather data
-        $gatewayFactory = Injector::inst()->get('Omnipay\Common\GatewayFactory');
+        $gatewayFactory = Injector::inst()->get( GatewayFactory::class );
         $gateway = $gatewayFactory->create(Payment::CPP_GATEWAY_CODE);
         $config = GatewayInfo::getParameters(Payment::CPP_GATEWAY_CODE);
         if($jwtPublicKey) {
