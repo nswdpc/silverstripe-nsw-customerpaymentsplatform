@@ -69,7 +69,7 @@ class PurchaseServiceExtension extends Extension
         // override the transactionId provided (e.g Silvershop Order.Reference, if module is installed)
         $gatewayData['transactionId'] = $cppPayment->AgencyTransactionId;
         // validate AgencyTransactionId
-        if(!CPPBusinessRuleService::validateAgencyTransactionId($cppPayment->AgencyTransactionId)) {
+        if(!BusinessRuleService::validateAgencyTransactionId($cppPayment->AgencyTransactionId)) {
             Logger::log("Error: new CPP payment has invalid agency transaction ID '{$cppPayment->AgencyTransactionId}'", "ERROR");
             throw new \RuntimeException(
                 _t(
@@ -125,7 +125,7 @@ class PurchaseServiceExtension extends Extension
 
         // check for valid data
         // validate AgencyTransactionId
-        if(!CPPBusinessRuleService::validateAgencyTransactionId($cppPayment->AgencyTransactionId)) {
+        if(!BusinessRuleService::validateAgencyTransactionId($cppPayment->AgencyTransactionId)) {
             Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid agency transction ID '{$cppPayment->AgencyTransactionId}'", "ERROR");
             throw new \RuntimeException(
                 _t(
@@ -139,7 +139,7 @@ class PurchaseServiceExtension extends Extension
         $productDescription = "Payment for {$cppPayment->AgencyTransactionId}";
         // set amount and validate
         $amount = $cppPayment->Amount->getAmount();
-        if(!CPPBusinessRuleService::validateAmount($amount)) {
+        if(!BusinessRuleService::validateAmount($amount)) {
             Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid amount '{$amount}'", "ERROR");
             throw new \RuntimeException(
                 _t(
@@ -150,7 +150,7 @@ class PurchaseServiceExtension extends Extension
         }
 
         $callingSystem = $cppPayment->config()->get('calling_system');
-        if(!CPPBusinessRuleService::validateCallingSystem($callingSystem)) {
+        if(!BusinessRuleService::validateCallingSystem($callingSystem)) {
             Logger::log("Error: CPP payment #{$cppPayment->ID} has invalid callingSystem '{$callingSystem}'", "ERROR");
             throw new \RuntimeException(
                 _t(
