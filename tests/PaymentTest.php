@@ -3,7 +3,7 @@
 namespace NSWDPC\Payments\NSWGOVCPP\Tests;
 
 use NSWDPC\Payments\NSWGOVCPP\Agency\Payment;
-use NSWDPC\Payments\NSWGOVCPP\Agency\CPPBusinessRuleService;
+use NSWDPC\Payments\NSWGOVCPP\Agency\BusinessRuleService;
 use NSWDPC\Payments\NSWGOVCPP\Agency\PaymentCompletionService;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
@@ -33,7 +33,7 @@ class PaymentTest extends SapphireTest {
      */
     public function testCppValidateCallingSystem() {
         $callingSystem = "";
-        $this->assertFalse( CPPBusinessRuleService::validateCallingSystem($callingSystem) );
+        $this->assertFalse( BusinessRuleService::validateCallingSystem($callingSystem) );
     }
 
     /**
@@ -59,7 +59,7 @@ class PaymentTest extends SapphireTest {
         $i = 0;
         foreach($amounts as $amount) {
             $type = gettype($amount['value']);
-            $found = CPPBusinessRuleService::validateAmount($amount['value']);
+            $found = BusinessRuleService::validateAmount($amount['value']);
             $in = is_scalar($amount['value']) ? $amount['value'] : $type;
             $this->assertEquals(
                 $amount['expected'],

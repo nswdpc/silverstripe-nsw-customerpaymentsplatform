@@ -28,10 +28,12 @@ trait TestJWTHandling {
         // check it matches expected JWT
         $this->assertNotEmpty($jwt, "JWT is empty");
 
+        $jwtPublicKey = $testJWT->getVal('jwtPublicKey');
+
         // test JWT decode
         $result = JWT::decode(
             $jwt,
-            $testJWT->getVal('jwtPublicKey'),
+            $jwtPublicKey,
             $testJWT->getVal('jwtAlgos')
         );
 

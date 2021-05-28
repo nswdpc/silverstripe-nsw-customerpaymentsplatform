@@ -1,0 +1,54 @@
+SilverStripe\Omnipay\Model\Payment:
+  paymentToComplete:
+    ID: 100
+    Gateway: NSWGOVCPP
+    MoneyAmount: 3.14
+    MoneyCurrency: AUD
+    Status: PendingPurchase
+    SuccessUrl: '/checkout/order/abc123'
+    FailureUrl: '/checkout/'
+    Identifier: '60b5dd8ab36afe0159c2e32e52d90315fdc741973cf833589b'
+  paymentToCancel:
+    ID: 101
+    Gateway: NSWGOVCPP
+    MoneyAmount: 191.23
+    MoneyCurrency: AUD
+    Status: PendingPurchase
+    SuccessUrl: '/checkout/order/abc123'
+    FailureUrl: '/checkout/'
+    Identifier: '15599f0889a8bf8685e66d28effe5921'
+  paymentToSuccess:
+    ID: 102
+    Gateway: NSWGOVCPP
+    MoneyAmount: 581.99
+    MoneyCurrency: AUD
+    Status: Captured
+    SuccessUrl: '/checkout/order/xyz123'
+    FailureUrl: '/checkout/'
+    Identifier: '15599f0889a8bf8685e66d28effe5921'
+NSWDPC\Payments\NSWGOVCPP\Agency\Payment:
+  cppPaymentToComplete:
+    ID: 28
+    OmnipayPaymentID: 100
+    PaymentCompletionReference: null
+    PaymentStatus: 'IN_PROGRESS'
+    # these values must match the values in jwtPayload in jwt.yml
+    PaymentReference: 'GPP-DIG-pJlBU1EnSBGdmxULq6a4mA'
+    AgencyTransactionId: 'c552b9e6-26c4-4bb5-9f1d-9c34ecd78597'
+  cppPaymentToCancel:
+    ID: 29
+    OmnipayPaymentID: 101
+    PaymentCompletionReference: null
+    PaymentStatus: 'IN_PROGRESS'
+    # these values must match the values in jwtPayload in jwt.yml
+    PaymentReference: 'GPP-DIG-123456789'
+    AgencyTransactionId: 'txn-512-358-901-8ab'
+  cppPaymentToSuccess:
+    ID: 30
+    OmnipayPaymentID: 102
+    PaymentStatus: 'COMPLETED'
+    # these values must match the values in jwtPayload in jwt.yml
+    PaymentReference: 'GPP-DIG-1000020000'
+    PaymentMethod: 'CARD'
+    PaymentCompletionReference: 'completed-payment=123'
+    AgencyTransactionId: 'txn-123-abc-908-211'
