@@ -219,6 +219,7 @@ class Payment extends DataObject implements PermissionProvider
         'Created.Nice' => 'Created',
         'AgencyTransactionId' => 'Agency Txn Id',
         'PaymentStatus' => 'Status',
+        'OmnipayPayment.Status' => 'Omnipay Status',
         'PaymentMethod' => 'Method',
         'PaymentReference' => 'Pmt Ref',
         'PaymentCompletionReference' => 'Pmt Completion Ref',
