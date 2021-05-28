@@ -10,9 +10,6 @@ SilverStripe\Omnipay\Service\PurchaseService:
 SilverStripe\Omnipay\Service\RefundService:
   extensions:
     - 'NSWDPC\Payments\NSWGOVCPP\Agency\RefundServiceExtension'
-SilverStripe\Omnipay\PaymentGatewayController:
-  extensions:
-    - 'NSWDPC\Payments\NSWGOVCPP\Agency\PaymentGatewayControllerExtension'
 SilverStripe\Omnipay\Model\Payment:
   extensions:
     - 'NSWDPC\Payments\NSWGOVCPP\Agency\OmnipayPaymentExtension'

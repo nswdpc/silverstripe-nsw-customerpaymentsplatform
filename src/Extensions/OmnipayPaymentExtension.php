@@ -26,53 +26,14 @@ use SilverShop\Model\Order as SilvershopOrder;
  */
 class OmnipayPaymentExtension extends DataExtension
 {
+
+    /**
+     * @var array
+     */
     private static $belongs_to = [
         // this Omnipay Payment record belongs to the CppPayment.OmnipayPaymentID relation
         'CppPayment' => Payment::class . ".OmnipayPayment"
     ];
-
-    /**
-     * @return bool
-     */
-    public function hasException() : bool {
-        $this->owner->exception = $e;
-    }
-
-    /**
-     * @param \Exception
-     */
-    public function setException(\Exception $e) {
-        $this->owner->exception = $e;
-    }
-
-    /**
-     * @return \Exception
-     */
-    public function getException() : \Exception {
-        return $this->owner->exception;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function onBeforeWrite()
-    {
-        if($this->owner->hasException()) {
-            throw new \Exception("Cannot write a payment record that has an exception");
-        }
-    }
-
-    /**
-     * Create a Purchase service for CPP payment response handling
-     * @return CPPPurchaseService|false
-     */
-    public function createPurchaseService() {
-        // if the gateway is not the CPP gateway, no ServiceResponse is returned
-        if($this->owner->Gateway != Payment::CPP_GATEWAY_CODE ) {
-            return false;
-        }
-        return new CPPPurchaseService( $this->owner );
-    }
 
     /**
      * Update CMS fields based on existence of Silvershop

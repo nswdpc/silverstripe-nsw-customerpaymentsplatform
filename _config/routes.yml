@@ -1,5 +1,11 @@
 ---
 Name: nswdpc-cpp-routes
 After:
+  - '#rootroutes'
   - '#coreroutes'
+Before:
+  - '#omnipay-routes'
 ---
+SilverStripe\Control\Director:
+  rules:
+    'paymentendpoint//gateway/NSWGOVCPP/$Status' : NSWDPC\Payments\NSWGOVCPP\Agency\PaymentGatewayController
