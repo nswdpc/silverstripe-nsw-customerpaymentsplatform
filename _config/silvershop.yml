@@ -8,10 +8,11 @@ Only:
 SilverShop\Model\Order:
   extensions:
     - 'NSWDPC\Payments\NSWGOVCPP\Agency\SilvershopOrderExtension'
+
 ## Membership settings
 SilverShop\Checkout\CheckoutConfig:
-  member_creation_enabled: false
-  membership_required: false
+  member_creation_enabled: true
+  membership_required: true
 
 ## Default to AU localisation
 SilverStripe\i18n\i18n:
@@ -33,3 +34,12 @@ SilverShop\ORM\FieldType\ShopCurrency:
   thousand_delimiter: ','
   # european style currencies, e.g. 45,00 € instead of €45,00
   append_symbol: false
+
+# Configure stepped checkout page
+SilverShop\Page\CheckoutPage:
+  steps:
+    membership: 'SilverShop\Checkout\Step\Membership'
+    contactdetails: 'SilverShop\Checkout\Step\ContactDetails'
+    shippingaddress: 'SilverShop\Checkout\Step\AddressBook'
+    billingaddress: 'SilverShop\Checkout\Step\AddressBook'
+    summary: 'SilverShop\Checkout\Step\Summary'
