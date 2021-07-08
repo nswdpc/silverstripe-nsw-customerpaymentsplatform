@@ -14,14 +14,17 @@
                 <% include PageElemental %>
 
                 <% if $Products %>
-                    <div class="nsw-grid">
-                        <div class="nsw-col nsw-col-md-6 nsw-col-lg-4">
-                            <% loop $Products %>
-                                <% include SilverShop\Includes\ProductGroupItem %>
-                            <% end_loop %>
+
+                    <div class="nsw-grid nsw-grid--spaced">
+                        <% loop $Products %>
+                        <div class="nsw-col nsw-col-md-6">
+                            <% include SilverShop\Includes\ProductGroupItem %>
                         </div>
-                        <% include SilverShop\Includes\ProductGroupPagination %>
+                        <% end_loop %>
                     </div>
+
+                    <% include SilverShop\Includes\ProductGroupPagination %>
+
                 <% end_if %>
 
                 <% include PageForm %>

@@ -1,5 +1,3 @@
-<%-- require css("silvershop/core: client/dist/css/sidecart.css") --%>
-
 <div class="nsw-grid nsw-grid--spaced">
 
     <div class="nsw-col">
@@ -18,7 +16,7 @@
                         <% end_if %>
                     </p>
                     <% if $Items.count > 0 %>
-                    <table class="nsw-table">
+                    <table class="nsw-table nsw-table--striped">
                         <thead>
                             <tr>
                                 <th>Item</th>

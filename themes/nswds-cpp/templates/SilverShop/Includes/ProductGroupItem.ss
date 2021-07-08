@@ -1,66 +1,70 @@
-<div class="nsw-card">
+<div class="nsw-content-block">
 
-    <div class="nsw-card__content">
+    <div class="nsw-content-block__content">
 
-        <h2 class="nsw-card__title">
-            <a href="$Link" class="nsw-card__link">$Title</a>
-        </h2>
+        <h3 class="nsw-content-block__title">
+            $Title
+        </h3>
 
-        <% if $Abstract %>
-            <p class="nsw-card__copy">
-            $Abstract.XML
+
+            <p class="nsw-content-block__copy">
+                <% if $Abstract %>
+                    $Abstract.XML
+                <% end_if %>
+                <a href="$Link">View</a>
             </p>
-        <% end_if %>
 
-        <% if $Model %>
-        <p class="nsw-card__copy">
-            <strong><%t SilverShop\Page\Product.Model "Model" %>:</strong> $Model.XML
-        </p>
-        <% end_if %>
+            <ul class="nsw-content-block__list">
 
-        <p class="nsw-card__copy">
-            <strong>Price:</strong>
-            <% if $PriceRange %>
-                    <strong class="value">$PriceRange.Min.Nice</strong>
-                    <% if $PriceRange.HasRange %>
-                        - <strong class="value">$PriceRange.Max.Nice</strong>
-                    <% end_if %>
-                    <span class="currency">$Price.Currency</span>
-                </div>
-            <% else_if $Price %>
-                    <strong class="value">$Price.Nice</strong> <span class="currency">$Price.Currency</span>
+            <% if $Model %>
+                <li>
+                <span><strong><%t SilverShop\Page\Product.Model "Model" %>:</strong> $Model.XML</span>
+                </li>
             <% end_if %>
 
-        </p>
+                <li>
 
-        <% if $View %>
-            <p class="nsw-card__copy">
-                <a href="$Link" class="nsw-card__link"">
-                    <%t SilverShop\Page\Product.View "View Product" %>
-                </a>
-            </p>
-        <% else %>
+                <span>
+                <strong>Price:</strong>
+                <% if $PriceRange %>
+                        <strong class="value">$PriceRange.Min.Nice</strong>
+                        <% if $PriceRange.HasRange %>
+                            - <strong class="value">$PriceRange.Max.Nice</strong>
+                        <% end_if %>
+                        <span class="currency">$Price.Currency</span>
+                    </div>
+                <% else_if $Price %>
+                        <strong class="value">$Price.Nice</strong> <span class="currency">$Price.Currency</span>
+                <% end_if %>
+                </span>
+
+                </li>
+            </ul>
+
+            <div class="nsw-content-block__link">
+               <a href="$Link" class="nsw-content-block__link"">
+                   <%t SilverShop\Page\Product.View "View Product" %>
+               </a>
+           </div>
 
             <% if $canPurchase %>
-                <p class="nsw-card__copy">
-                    <a href="$addLink" class="nsw-button nsw-button--primary nsw-button--full-width">
-                        <%t SilverShop\Page\Product.AddToCart "Add to Cart" %>
-                        <%--
-                        <% if $IsInCart %>
-                            ($Item.Quantity)
-                        <% end_if %>
-                        --%>
-                    </a>
-                </p>
+                <div class="nsw-content-block__link">
+                <a href="$addLink" class="nsw-button nsw-button--primary nsw-button--full-width">
+                    <%t SilverShop\Page\Product.AddToCart "Add to Cart" %>
+                    <%--
+                    <% if $IsInCart %>
+                        ($Item.Quantity)
+                    <% end_if %>
+                    --%>
+                </a>
+                </div>
+
             <% end_if %>
-
-        <% end_if %>
-
     </div>
 
     <% if $Image %>
-    <div class="nsw-card__image-area">
-        <img src="{$Image.ScaleWidth(720).URL}" class="nsw-card__image" alt="{$Image.Title.XML}">
+    <div class="nsw-content-block__image-area">
+        <img src="{$Image.ScaleWidth(720).URL}" class="nsw-content-block__image" alt="{$Image.Title.XML}">
     </div>
     <% end_if %>
 

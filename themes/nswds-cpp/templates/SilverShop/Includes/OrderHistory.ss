@@ -20,15 +20,17 @@
         <tbody>
         <% loop $PastOrders %>
             <tr class="{$Status}">
-                <td>$Reference</td>
+                <td>
+                    <a href="$Link">
+                    $Reference
+                    </a>
+                </td>
                 <td>$Created.Nice</td>
                 <td>$Items.Quantity</td>
                 <td>$Total.Nice</td>
                 <td>$StatusI18N</td>
                 <td>
-                    <a class="button" href="$Link">
-                        <% include Icon Icon=pageview %>
-                    </a>
+                    <a href="$Link"><% include Icon Icon=pageview %></a>
                 </td>
             </tr>
         <% end_loop %>

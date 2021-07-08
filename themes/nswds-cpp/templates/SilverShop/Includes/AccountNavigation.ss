@@ -41,7 +41,7 @@
 
         <div role="region" aria-labelledby="account-profile-caption" tabindex="0">
 
-            <table class="nsw-table nsw-table--bordered nsw-table--striped nsw-table--caption-top">
+            <table class="nsw-table nsw-table--striped nsw-table--caption-top">
 
                 <caption id="account-profile-caption">
                     Your profile information
