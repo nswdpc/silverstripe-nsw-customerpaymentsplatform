@@ -25,6 +25,9 @@ SilverShop\Page\Product:
   # millimetres
   length_unit: mm
 
+SilverShop\Page\ProductCategory:
+  page_length: 3
+
 SilverShop\Extension\ShopConfigExtension:
   base_currency: 'AUD'
   email_from: digital@dpc.nsw.gov.au
