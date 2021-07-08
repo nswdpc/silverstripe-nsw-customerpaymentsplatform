@@ -14,11 +14,16 @@
 
                 <% include PageElemental %>
 
-                <h2 class="pagetitle">
+                <h2>
                     <%t SilverShop\Page\AccountPage_EditProfile.Title 'Edit Profile' %>
                 </h2>
 
                 $EditAccountForm
+
+
+                <h2>
+                    Change password
+                </h2>
 
                 $ChangePasswordForm
 
