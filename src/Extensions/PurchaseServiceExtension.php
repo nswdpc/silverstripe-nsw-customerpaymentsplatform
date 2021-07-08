@@ -176,6 +176,10 @@ class PurchaseServiceExtension extends Extension
             // optional, include when set
             $gatewayData['payload']["customerReference"] = $cppPayment->PayerReference;
         }
+
+        // Payment attempt validated, request to place an order prior to attempt to redirect to CPP
+        $cppPayment->placeOrderForPayment();
+
     }
 
     /**

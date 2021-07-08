@@ -393,6 +393,7 @@ class PaymentGatewayController extends OmnipayPaymentGatewayController
                     // Triggers a complete() with isNotification true on the ServiceResponse
                     $payment->Status = 'Captured';
                     $payment->write();
+                    $cppPayment->completePaymentForOrder();
                     return $payment;
                 }
 
