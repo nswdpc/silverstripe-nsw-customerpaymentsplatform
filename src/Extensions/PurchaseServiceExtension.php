@@ -178,7 +178,8 @@ class PurchaseServiceExtension extends Extension
         }
 
         // Payment attempt validated, request to place an order prior to attempt to redirect to CPP
-        $cppPayment->placeOrderForPayment();
+        // See: OmnipayPaymentExtension
+        $payment->placeOrderForPayment();
 
     }
 

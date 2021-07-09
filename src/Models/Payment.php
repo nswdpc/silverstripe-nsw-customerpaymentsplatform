@@ -15,8 +15,6 @@ use SilverShop\HasOneField\HasOneButtonField;
 use SilverShop\HasOneField\HasOneAddExistingAutoCompleter;
 use SilverShop\HasOneField\GridFieldHasOneUnlinkButton;
 use SilverShop\HasOneField\GridFieldHasOneEditButton;
-use SilverShop\Checkout\OrderProcessor as SilverShopOrderProcessor;
-use SilverShop\Model\Order as SilverShopOrder;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\DropdownField;
@@ -825,73 +823,4 @@ class Payment extends DataObject implements PermissionProvider
         return DBField::create_field(DBBoolean::class, $this->IsReconciled());
     }
 
-    /**
-     * Place an order for this CPP payment, which occurs just prior to hand-off to gateway
-     * @return null
-     * @throws \RunTimeException
-     */
-    public function placeOrderForPayment() {
-
-        // payment must exist
-        if(!$this->isInDB()) {
-            return;
-        }
-
-        // if the CPP payment is not in an initialised state, cannot place an order on it
-        if($this->PaymentStatus != self::CPP_PAYMENTSTATUS_INITIALISED) {
-            return;
-        }
-
-        $omnipayPayment = $this->OmnipayPayment();
-        if(!$omnipayPayment) {
-            throw new \RunTimeException("No Omnipay Payment found for this CPP payment");
-        }
-
-        if(class_exists(SilverShopOrder::class)) {
-            /**
-             * Place a Silvershop Order created by its OrderProcessor
-             * @var SilverShopOrder $order
-             */
-             $order = SilverShopOrder::get()->byID($omnipayPayment->OrderID);
-             if ($order && $order->exists()) {
-                 SilverShopOrderProcessor::create($order)->placeOrder();
-                 Logger::log("Placed SilverShopOrder #{$order->ID} for payment {$omnipayPayment->ID}");
-             }
-        } else {
-            $this->extend('onPlaceOrderForPayment');
-        }
-    }
-
-    /**
-     * Complete payment for order, which occurs when the Omnipay Payment is marked as captured
-     * @throws \RunTimeException
-     */
-    public function completePaymentForOrder() {
-
-        // payment must exist
-        if(!$this->isInDB()) {
-            return;
-        }
-
-        $omnipayPayment = $this->OmnipayPayment();
-        if(!$omnipayPayment) {
-            throw new \RunTimeException("No Omnipay Payment found for this CPP payment");
-        }
-        if(!$omnipayPayment->Status != 'Captured') {
-            throw new \RunTimeException("Cannot complete payment on an order for a non-captured payment");
-        }
-
-        if(class_exists(SilverShopOrder::class)) {
-            /**
-             * @var SilverShopOrder $order
-             */
-            $order = SilverShopOrder::get()->byID($omnipayPayment->OrderID);
-            if ($order && $order->exists()) {
-                SilverShopOrderProcessor::create($order)->completePayment();
-                Logger::log("Completed payment for SilverShopOrder #{$order->ID} for payment {$omnipayPayment->ID}");
-            }
-        } else {
-            $this->extend('onCompletePaymentForOrder');
-        }
-    }
 }

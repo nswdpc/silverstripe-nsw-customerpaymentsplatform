@@ -16,6 +16,7 @@ use SilverShop\HasOneField\HasOneAddExistingAutoCompleter;
 use SilverShop\HasOneField\GridFieldHasOneUnlinkButton;
 use SilverShop\HasOneField\GridFieldHasOneEditButton;
 use SilverShop\Model\Order as SilvershopOrder;
+use SilverShop\Checkout\OrderProcessor as SilverShopOrderProcessor;
 
 /**
  * Provides extension handling to maintain the relation between the CPP Payment
@@ -107,5 +108,69 @@ class OmnipayPaymentExtension extends DataExtension
         // update the status
         $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_REFUND_APPLIED;
         $cppPayment->write();
+    }
+
+
+    /**
+     * Place an order for this OmnipayPayment, which occurs just prior to hand-off to gateway
+     * @return null
+     * @throws \RunTimeException
+     */
+    public function placeOrderForPayment() {
+
+        Logger::log("placeOrderForPayment OmnipayPayment.Status= " . $this->owner->Status);
+
+        // payment must exist
+        if(!$this->owner->isInDB()) {
+            throw new \RunTimeException("Cannot place order on a OmnipayPayment that does not exist");
+        }
+
+        //
+        if($this->owner->Status != 'Created') {
+            throw new \RunTimeException("Cannot place order on OmnipayPayment={$this->owner->ID} when status={$this->owner->Status}");
+        }
+
+        if(class_exists(SilverShopOrder::class)) {
+            /**
+             * Place a Silvershop Order created by its OrderProcessor
+             * @var SilverShopOrder $order
+             */
+             $order = SilverShopOrder::get()->byID($this->owner->OrderID);
+             if ($order && $order->exists()) {
+                 SilverShopOrderProcessor::create($order)->placeOrder();
+                 Logger::log("Placed SilverShopOrder #{$order->ID} for OmnipayPayment={$this->owner->ID}");
+             }
+        } else {
+            $this->owner->extend('onPlaceOrderForPayment');
+        }
+    }
+
+    /**
+     * Complete payment for order, which occurs when the Omnipay Payment is marked as captured
+     * @throws \RunTimeException
+     */
+    public function completePaymentForOrder() {
+
+        // payment must exist
+        if(!$this->owner->isInDB()) {
+            throw new \RunTimeException("Cannot complete OmnipayPayment for an order - OmnipayPayment does not exist");
+        }
+
+        if($this->owner->Status != 'Captured') {
+            throw new \RunTimeException("Cannot complete OmnipayPayment={$this->owner->ID} for an order when status={$this->owner->Status}");
+        }
+
+        if(class_exists(SilverShopOrder::class)) {
+            /**
+             * @var SilverShopOrder $order
+             */
+            $order = SilverShopOrder::get()->byID($this->owner->OrderID);
+            if ($order && $order->exists()) {
+                SilverShopOrderProcessor::create($order)->completePayment();
+                Logger::log("Completed payment for SilverShopOrder #{$order->ID} for OmnipayPayment {$this->owner->ID}");
+            }
+        } else {
+            $this->owner->extend('onCompletePaymentForOrder');
+        }
     }
 }

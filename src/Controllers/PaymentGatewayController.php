@@ -377,31 +377,40 @@ class PaymentGatewayController extends OmnipayPaymentGatewayController
                     throw new UnprocessableEntityException("Payment already captured");
                 }
 
-                // save POSTed output to the CPP payment model
-                // status will be completed as the JWT is only sent when the payment
-                // was successfully made
-                $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_COMPLETED;
-                $cppPayment->PaymentReference = $data['paymentReference'] ?? '';
-                $cppPayment->PaymentCompletionReference = $data['paymentCompletionReference'] ?? '';
-                $cppPayment->BankReference = $data['bankReference'] ?? '';
-                $cppPayment->PaymentMethod = $data['paymentMethod'] ?? '';
-                $cppPayment->write();
+                try {
 
-                // Success: ensure payment is marked as Captured
-                if ($payment instanceof OmnipayPayment) {
-                    // ServiceResponse = SilverStripe\Omnipay\Service\PurchaseService
-                    // Triggers a complete() with isNotification true on the ServiceResponse
+                    if (!($payment instanceof OmnipayPayment)) {
+                        // The payment record is invalid
+                        throw new \Exception("Invalid payment record found");
+                    }
+
+                    // Ensure OmnipayPayment is marked as Captured and the order is completed
                     $payment->Status = 'Captured';
+                    $payment->completePaymentForOrder();
                     $payment->write();
-                    $cppPayment->completePaymentForOrder();
-                    return $payment;
+
+                    // Mark CPP payment as completed
+                    $cppPayment->PaymentStatus = Payment::CPP_PAYMENTSTATUS_COMPLETED;
+                    $cppPayment->PaymentReference = $data['paymentReference'] ?? '';
+                    $cppPayment->PaymentCompletionReference = $data['paymentCompletionReference'] ?? '';
+                    $cppPayment->BankReference = $data['bankReference'] ?? '';
+                    $cppPayment->PaymentMethod = $data['paymentMethod'] ?? '';
+                    $cppPayment->write();
+
+                } catch (\Exception $e) {
+                    // Fallback - cannot find a valid Omnipay Payment or error on write
+                    Logger::log("Exception=" . $e->getMessage(), "NOTICE");
+
+                    // Trigger a 422
+                    throw new UnprocessableEntityException("Completion request: CPP payment #{$cppPayment->ID} failed");
                 }
 
-                // Fallback - cannot find a valid Omnipay Payment or error on write
-                throw new UnprocessableEntityException("Completion request: CPP payment #{$cppPayment->ID} has no OmnipayPayment");
+                // on success, return payment
+                return $payment;
 
                 break;
             default:
+                // Trigger a 422
                 throw new UnprocessableEntityException("Unknown status '{$status}'");
                 break;
         } // end switch
