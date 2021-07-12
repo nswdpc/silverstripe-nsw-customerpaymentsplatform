@@ -17,7 +17,7 @@
                 <div class="details">
 
                     <% if $Image.ContentImage %>
-                        <% include nswds/Media Image=$Image.ContentImage %>
+                        <% include nswds/Media Image=$Image %>
                     <% else %>
                         <div class="noimage">
                         </div>
