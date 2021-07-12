@@ -19,7 +19,9 @@
 
         <thead>
             <tr>
-                <th scope="col" colspan="2"><%t SilverShop\Page\Product.SINGULARNAME "Product" %></th>
+                <th scope="col" colspan="2">
+                    <%t SilverShop\Page\Product.SINGULARNAME "Product" %>
+                </th>
                 <th scope="col"><%t SilverShop\Model\Order.UnitPrice "Unit Price" %></th>
                 <th scope="col"><%t SilverShop\Model\Order.Quantity "Quantity" %></th>
                 <th scope="col"><%t SilverShop\Model\Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
@@ -36,7 +38,7 @@
                         <% if $Image %>
                             <div class="image">
                                 <a href="$Link">
-                                    <% include nswds/Media Image=$Image, ImageWidth=45 %>
+                                    <% include nswds/Media Image=$Image, ImageWidth=100 %>
                                 </a>
                             </div>
                         <% end_if %>
