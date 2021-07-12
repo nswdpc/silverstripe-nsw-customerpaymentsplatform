@@ -139,7 +139,7 @@
                         <%t SilverShop\Model\Order.Total "Total" %>
                     </th>
                     <td>
-                        <span class="value">$Total.Nice</span> <span class="currency">$Currency</span>
+                        <span class="value">$Total.Nice</span>
                     </td>
                     <% if $Editable %>
                     <td>&nbsp;</td>

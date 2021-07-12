@@ -16,35 +16,38 @@
 
                 <div class="details">
 
-                    <% if $Image.ContentImage %>
+                    <% include SilverShop\Includes\Price %>
+
+                    <% if $Image %>
                         <% include nswds/Media Image=$Image %>
                     <% else %>
                         <div class="noimage">
                         </div>
                     <% end_if %>
 
+                    <ul>
                     <% if $InternalItemID %>
-                        <p class="product-code">
+                        <li>
                             <span class="title"><%t SilverShop\Page\Product.Code "Product Code" %>:</span>
                             <span class="value">{$InternalItemID}</span>
-                        </p>
+                        </li>
                     <% end_if %>
 
                     <% if $Model %>
-                        <p class="product-model">
+                        <li>
                             <span class="title"><%t SilverShop\Page\Product.Model "Model" %>:</span>
                             <span class="value">$Model.XML</span>
-                        </p>
+                        </li>
                     <% end_if %>
 
                     <% if $Size %>
-                        <p class="product-size">
+                        <li>
                             <span class="title"><%t SilverShop\Page\Product.Size "Size" %>:</span>
                             <span class="value">$Size.XML</span>
-                        </p>
+                        </li>
                     <% end_if %>
 
-                    <% include SilverShop\Includes\Price %>
+                    </ul>
 
                     <% if $IsInCart %>
                         <p class="product-numcart">
