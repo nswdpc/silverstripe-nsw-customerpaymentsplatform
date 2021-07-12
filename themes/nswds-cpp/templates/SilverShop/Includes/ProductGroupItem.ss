@@ -42,24 +42,17 @@
             </ul>
 
             <div class="nsw-content-block__link">
-               <a href="$Link" class="nsw-content-block__link"">
+               <a href="$Link" class="nsw-content-block__link">
                    <%t SilverShop\Page\Product.View "View Product" %>
                </a>
            </div>
 
             <% if $canPurchase %>
                 <div class="nsw-content-block__link">
-                <a href="$addLink" class="nsw-button nsw-button--primary nsw-button--full-width">
-                    <%t SilverShop\Page\Product.AddToCart "Add to Cart" %>
-                    <%--
-                    <% if $IsInCart %>
-                        ($Item.Quantity)
-                    <% end_if %>
-                    --%>
-                </a>
+                    <% include nswds/Button Link=$addLink, ButtonClass='nsw-button--full-width', Title='Add to Cart' %>
                 </div>
-
             <% end_if %>
+
     </div>
 
     <% if $Image %>

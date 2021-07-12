@@ -1,1 +1,1 @@
-<% include Pagination PaginatedItems=$Products, Limit=5 %>
+<% include nswds/Pagination PaginatedItems=$Products, Limit=5 %>

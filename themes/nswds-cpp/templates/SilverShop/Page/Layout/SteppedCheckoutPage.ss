@@ -13,7 +13,7 @@
                 <% include PageElemental %>
 
                 <% if $PaymentErrorMessage %>
-                    <% include InPageNotification Icon='error', Level='info', MessageTitle='Payment error', Message=$PaymentErrorMessage %>
+                    <% include nswds/InPageNotification nswds/Icon='error', Level='info', MessageTitle='Payment error', Message=$PaymentErrorMessage %>
                 <% end_if %>
 
                 <% if $Cart %>
@@ -182,7 +182,7 @@
 
                 <% else %>
 
-                    <% include InPageNotification Icon='shopping_cart', Level='info', MessageTitle='Empty', Message='There are no items in your cart' %>
+                    <% include nswds/InPageNotification nswds/Icon='shopping_cart', Level='info', MessageTitle='Empty', Message='There are no items in your cart' %>
 
                     <% if $ContinueLink %>
                         <a class="nsw-button nsw-button--primary nsw-button--full-width" href="$ContinueLink">

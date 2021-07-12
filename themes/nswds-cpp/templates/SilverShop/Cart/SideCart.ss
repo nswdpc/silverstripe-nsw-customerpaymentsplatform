@@ -51,7 +51,7 @@
                             </td>
                             <td>
                                 <a class="remove" href="$removeallLink">
-                                     <% include Icon Icon=remove_shopping_cart %>
+                                     <% include nswds/Icon Icon=remove_shopping_cart %>
                                 </a>
                             </td>
                         </tr>
@@ -67,7 +67,7 @@
                 <% end_with %>
 
             <% else %>
-                <% include InPageNotification Icon='shopping_cart', Level='info', MessageTitle='Empty', Message='There are no items in your cart' %>
+                <% include nswds/InPageNotification Icon='shopping_cart', Level='info', MessageTitle='Empty', Message='There are no items in your cart' %>
             <% end_if %>
 
         </div>

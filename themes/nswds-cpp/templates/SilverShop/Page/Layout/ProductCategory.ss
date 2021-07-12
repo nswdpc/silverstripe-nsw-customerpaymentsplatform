@@ -2,40 +2,40 @@
 
     <div class="nsw-page-layout">
 
-        <main id="main-content" class="nsw-page-layout__main">
+    <main id="main-content" class="nsw-page-layout__main">
 
-            <article>
+        <article>
 
-                <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+            <div class="nsw-block">
+                <% include PageContentTitle %>
+                <% include PageContentAbstract %>
+            </div>
+
+            <% include PageElemental %>
+
+            <% if $Products %>
+
+                <div class="nsw-grid nsw-grid--spaced">
+                    <% loop $Products %>
+                    <div class="nsw-col nsw-col-md-6">
+                        <% include SilverShop\Includes\ProductGroupItem %>
+                    </div>
+                    <% end_loop %>
                 </div>
 
-                <% include PageElemental %>
+                <% include SilverShop\Includes\ProductGroupPagination %>
 
-                <% if $Products %>
+            <% end_if %>
 
-                    <div class="nsw-grid nsw-grid--spaced">
-                        <% loop $Products %>
-                        <div class="nsw-col nsw-col-md-6">
-                            <% include SilverShop\Includes\ProductGroupItem %>
-                        </div>
-                        <% end_loop %>
-                    </div>
+            <% include PageForm %>
 
-                    <% include SilverShop\Includes\ProductGroupPagination %>
+        </article>
 
-                <% end_if %>
+    </main>
 
-                <% include PageForm %>
-
-            </article>
-
-        </main>
-
-        <div class="nsw-page-layout__sidebar">
-            <% include SilverShop\Includes\SideBar %>
-        </div>
+    <div class="nsw-page-layout__sidebar">
+        <% include SilverShop\Includes\SideBar %>
+    </div>
 
     </div>
 

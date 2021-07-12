@@ -23,7 +23,7 @@
                                 <%t SilverShop\Page\AccountPage_AddressBook.No_Addresses_Title 'No Addresses' %>
                             </h2>
 
-                            <% include InPageNotification Icon='info', Level='warning', MessageTitle='Address book', Message='No addresses found.' %>
+                            <% include nswds/InPageNotification nswds/Icon='info', Level='warning', MessageTitle='Address book', Message='No addresses found.' %>
 
                         <% else %>
 
@@ -70,13 +70,13 @@
                                             <td>
 
                                                 <% if $ID == $Top.CurrentMember.DefaultShippingAddressID %>
-                                                    <% include Icon Icon='thumb_up' %>
+                                                    <% include nswds/Icon Icon='thumb_up' %>
                                                 <% end_if %>
                                             </td>
                                             <td>
 
                                                 <% if $ID == $Top.CurrentMember.DefaultBillingAddressID %>
-                                                    <% include Icon Icon='thumb_up' %>
+                                                    <% include nswds/Icon Icon='thumb_up' %>
                                                 <% end_if %>
 
                                             </td>

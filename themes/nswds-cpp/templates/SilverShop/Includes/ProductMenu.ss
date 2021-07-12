@@ -8,9 +8,9 @@
             <% with $Level(1) %>
                 <a href="$Link">
                 <span>
-                {$MenuTitle.XML}
+                {$MenuTitle.XML} parent
                 </span>
-                <% include Icon IconExtraClass='nsw-link-list__icon', Icon=list_alt %>
+                <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon='list_alt' %>
                 </a>
             <% end_with %>
         </li>
@@ -23,17 +23,17 @@
                     <li class="nsw-link-list__item">
                         <a href="$Link">
                         <span>
-                        {$MenuTitle.XML}
+                        {$MenuTitle.XML} children
                         </span>
-                        <% include Icon IconExtraClass='nsw-link-list__icon', Icon=list_alt %>
+                        <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon='list_alt' %>
                         </a>
                 <% else %>
                     <li class="nsw-link-list__item">
                         <a href="$Link">
                         <span>
-                        {$MenuTitle.XML}
+                        {$MenuTitle.XML} no children
                         </span>
-                        <% include Icon IconExtraClass='nsw-link-list__icon', Icon=list_alt %>
+                        <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon='list_alt' %>
                         </a>
                 <% end_if %>
 
@@ -43,9 +43,9 @@
                             <li class="nsw-link-list__item">
                                 <a href="$Link">
                                 <span>
-                                    {$MenuTitle.XML}
+                                {$MenuTitle.XML} child
                                 </span>
-                                <% include Icon IconExtraClass='nsw-link-list__icon', Icon=list_alt %>
+                                <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon=list_alt %>
                                 </a>
                             </li>
                         <% end_loop %>
@@ -54,7 +54,9 @@
 
                 </li>
             <% end_loop %>
+
         <% end_if %>
+
     </ul>
 
 </div>

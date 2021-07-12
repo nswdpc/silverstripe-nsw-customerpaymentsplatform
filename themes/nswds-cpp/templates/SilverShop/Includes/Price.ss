@@ -2,7 +2,7 @@
 
 <div class="price">
 
-    <% include Icon Icon=sell %>
+    <% include nswds/Icon Icon=sell %>
 
     <% if $PriceRange %>
         <strong class="value">$PriceRange.Min.Nice</strong>

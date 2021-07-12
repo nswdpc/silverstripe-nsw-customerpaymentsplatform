@@ -17,7 +17,7 @@
                 <h2>Order</h2>
 
                 <% if $Message %>
-                    <% include InPageNotification Icon='info', Level='info', MessageTitle='Order', Message=$Message %>
+                    <% include nswds/InPageNotification Icon='info', Level='info', MessageTitle='Order', Message=$Message %>
                 <% end_if %>
 
                 <% if $Order %>

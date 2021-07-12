@@ -10,26 +10,26 @@
             <li class="nsw-link-list__item">
                 <a href="{$Link}">
                     <span><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %></span>
-                    <% include Icon IconExtraClass='nsw-link-list__icon', Icon=list_alt %>
+                    <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon=list_alt %>
                 </a>
             </li>
             <li class="nsw-link-list__item">
                 <a href="{$Link('editprofile')}">
                     <span><%t SilverShop\Page\AccountPage.EditProfile 'Edit Profile' %></span>
-                    <% include Icon IconExtraClass='nsw-link-list__icon', Icon=admin_panel_settings %>
+                    <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon=admin_panel_settings %>
                 </a>
             </li>
             <li class="nsw-link-list__item">
                 <a href="{$Link('addressbook')}">
                     <span><%t SilverShop\Page\AccountPage.AddressBook 'Address Book' %></span>
-                    <% include Icon IconExtraClass='nsw-link-list__icon', Icon=local_shipping %>
+                    <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon=local_shipping %>
                 </a>
             </li>
             <li class="nsw-link-list__item">
 
                 <a href="Security/logout">
                     <span><%t SilverShop\Page\AccountPage.LogOut 'Log Out' %></span>
-                    <% include Icon IconExtraClass='nsw-link-list__icon', Icon=logout %>
+                    <% include nswds/Icon IconExtraClass='nsw-link-list__icon', Icon=logout %>
                 </a>
             </li>
         </ul>

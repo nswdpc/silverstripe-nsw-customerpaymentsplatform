@@ -13,7 +13,7 @@
                 <div id="Checkout">
 
                     <% if $PaymentErrorMessage %>
-                        <% include InPageNotification Icon='info', Level='warning', MessageTitle='Payment Error', Message=$PaymentErrorMessage %>
+                        <% include nswds/InPageNotification Icon='info', Level='warning', MessageTitle='Payment Error', Message=$PaymentErrorMessage %>
                     <% end_if %>
 
                     <% if $Content %>
@@ -32,7 +32,7 @@
 
                     <% else %>
 
-                        <% include InPageNotification Icon='info', Level='info', MessageTitle='There are no items in your cart.', Message=$PaymentErrorMessage %>
+                        <% include nswds/InPageNotification Icon='info', Level='info', MessageTitle='There are no items in your cart.', Message=$PaymentErrorMessage %>
 
                     <% end_if %>
                 </div>

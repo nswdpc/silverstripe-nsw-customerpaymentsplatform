@@ -22,24 +22,23 @@
                         <% end_with %>
                     <% end_if %>
 
-                <% else %>
-                    <% include InPageNotification Icon='shopping_cart', Level='info', MessageTitle='Empty', Message='There are no items in your cart' %>
-                <% end_if %>
+                    <nav class="cartfooter">
 
-                <div class="cartfooter">
-                    <% if $ContinueLink %>
-                        <a class="nsw-button nsw-button--primary nsw-button--full-width" href="$ContinueLink">
-                            <%t SilverShop\Cart\ShoppingCart.ContinueShopping 'Continue Shopping' %>
-                        </a>
-                    <% end_if %>
-                    <% if $Cart %>
-                        <% if $CheckoutLink %>
-                            <a class="nsw-button nsw-button--primary nsw-button--full-width" href="$CheckoutLink">
-                                <%t SilverShop\Cart\ShoppingCart.ProceedToCheckout 'Proceed to Checkout' %>
-                            </a>
+                        <p>Choose an option below to continue</p>
+
+                        <% if $ContinueLink %>
+                            <% include nswds/Button Link=$ContinueLink, ButtonClass='nsw-button--full-width', Title='Continue Shopping' %>
                         <% end_if %>
-                    <% end_if %>
-                </div>
+                        <% if $Cart %>
+                            <% if $CheckoutLink %>
+                            <% include nswds/Button Link=$CheckoutLink, ButtonClass='nsw-button--full-width', Title='Proceed to Checkout' %>
+                            <% end_if %>
+                        <% end_if %>
+                    </nav>
+
+                <% else %>
+                    <% include nswds/InPageNotification Icon='shopping_cart', Level='info', MessageTitle='Empty', Message='There are no items in your cart' %>
+                <% end_if %>
 
                 <% include PageForm %>
 

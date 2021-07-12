@@ -12,35 +12,42 @@
                 <% include PageElemental %>
             </article>
 
-            <div id="Product" class="typography">
+            <div class="product">
 
-                <div class="productDetails">
+                <div class="details">
+
                     <% if $Image.ContentImage %>
-                        <img class="productImage" src="$Image.ContentImage.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
+                        <% include nswds/Media Image=$Image.ContentImage %>
                     <% else %>
-                        <div class="noimage"><%t SilverShop\Page\Product.NoImage "no image" %></div>
+                        <div class="noimage">
+                        </div>
                     <% end_if %>
+
                     <% if $InternalItemID %>
-                        <p class="InternalItemID">
+                        <p class="product-code">
                             <span class="title"><%t SilverShop\Page\Product.Code "Product Code" %>:</span>
                             <span class="value">{$InternalItemID}</span>
                         </p>
                     <% end_if %>
+
                     <% if $Model %>
-                        <p class="Model">
+                        <p class="product-model">
                             <span class="title"><%t SilverShop\Page\Product.Model "Model" %>:</span>
                             <span class="value">$Model.XML</span>
                         </p>
                     <% end_if %>
+
                     <% if $Size %>
-                        <p class="Size">
+                        <p class="product-size">
                             <span class="title"><%t SilverShop\Page\Product.Size "Size" %>:</span>
                             <span class="value">$Size.XML</span>
                         </p>
                     <% end_if %>
+
                     <% include SilverShop\Includes\Price %>
+
                     <% if $IsInCart %>
-                        <p class="NumItemsInCart">
+                        <p class="product-numcart">
                             <% if $Item.Quantity == 1 %>
                                 <%t SilverShop\Page\Product.NumItemsInCartSingular "You have this item in your cart" %>
                             <% else %>

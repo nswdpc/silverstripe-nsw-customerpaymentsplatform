@@ -19,7 +19,7 @@
                     <% if $PastOrders %>
                         <% include SilverShop\Includes\OrderHistory %>
                     <% else %>
-                        <% include InPageNotification Icon='list_alt', Level='warning', MessageTitle='Orders', Message='No past orders found.' %>
+                        <% include nswds/InPageNotification Icon='list_alt', Level='warning', MessageTitle='Orders', Message='No past orders found.' %>
                     <% end_if %>
                 <% end_with %>
 
