@@ -14,7 +14,8 @@
 
                 <% include PageElemental %>
 
-                <h2 class="pagetitle"><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %></h2>
+                <h2><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %></h2>
+
                 <% with $Member %>
                     <% if $PastOrders %>
                         <% include SilverShop\Includes\OrderHistory %>

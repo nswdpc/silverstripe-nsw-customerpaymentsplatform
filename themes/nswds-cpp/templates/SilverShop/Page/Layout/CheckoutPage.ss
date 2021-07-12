@@ -10,7 +10,7 @@
                 </div>
                 <% include PageElemental %>
 
-                <div id="Checkout">
+                <div class="checkout">
 
                     <% if $PaymentErrorMessage %>
                         <% include nswds/InPageNotification Icon='info', Level='warning', MessageTitle='Payment Error', Message=$PaymentErrorMessage %>

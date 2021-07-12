@@ -5,14 +5,14 @@
     <table class="nsw-table nsw-table--caption-top nsw-table--striped">
         <caption id="order-Payments">All payment attempts on this order</caption>
         <thead>
-            <tr class="gap mainHeader">
-                <th colspan="4" class="left"><%t SilverShop\Payment.PaymentsHeadline "Payment(s)" %></th>
+            <tr>
+                <th colspan="4"><%t SilverShop\Payment.PaymentsHeadline "Payment(s)" %></th>
             </tr>
             <tr>
-                <th scope="row" class="twoColHeader"><%t SilverStripe\Omnipay\Model\Payment.Date "Date" %></th>
-                <th scope="row"  class="twoColHeader"><%t SilverStripe\Omnipay\Model\Payment.Amount "Amount" %></th>
-                <th scope="row"  class="twoColHeader"><%t SilverStripe\Omnipay\Model\Payment.db_Status "Payment Status" %></th>
-                <th scope="row" class="twoColHeader"><%t SilverStripe\Omnipay\Model\Payment.db_Gateway "Method" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.Date "Date" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.Amount "Amount" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.db_Status "Payment Status" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.db_Gateway "Method" %></th>
             </tr>
         </thead>
         <tbody>
@@ -27,7 +27,7 @@
                     <% loop $Messages %>
                         <tr>
                             <td colspan="4">
-                                $ClassName $Message $User.Name
+                                $Message $User.Name
                             </td>
                         </tr>
                     <% end_loop %>
