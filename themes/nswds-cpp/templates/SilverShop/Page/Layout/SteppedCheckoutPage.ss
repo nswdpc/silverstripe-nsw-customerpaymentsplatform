@@ -28,7 +28,7 @@
                             <div class="nsw-accordion__content">
                                 <div class="nsw-wysiwyg-content">
                                 <% with $Cart %>
-                                <% include SilverShop/Cart/Cart %>
+                                <% include SilverShop\Cart\Cart %>
                                 <% end_with %>
                                 </div>
                             </div>
@@ -43,7 +43,7 @@
                                 <div class="nsw-accordion__content">
                                     <div class="nsw-wysiwyg-content">
                                         <% if $IsCurrentStep('contactdetails') %>
-                                            <p><%t SilverShop/Checkout/Step/Address.SupplyContactInformation "Supply your contact information" %></p>
+                                            <p><%t SilverShop\Checkout\Step\Address.SupplyContactInformation "Supply your contact information" %></p>
                                             $OrderForm
                                         <% end_if %>
                                         <% if $IsPastStep('contactdetails') %>
@@ -57,29 +57,29 @@
 
                             <% if $IsPastStep('shippingaddress') %>
                                 <h2 class="nsw-accordion__title"><a class="accordion-toggle" title="edit address(es)" href="$Link('shippingaddress')">
-                                    <%t SilverShop/Model/Address.SINGULARNAME "Address" %>
+                                    <%t SilverShop\Model\Address.SINGULARNAME "Address" %>
                                 </a></h2>
                             <% else %>
-                                <h2 class="nsw-accordion__title accordion-toggle"><%t SilverShop/Model/Address.SINGULARNAME "Address" %></h2>
+                                <h2 class="nsw-accordion__title accordion-toggle"><%t SilverShop\Model\Address.SINGULARNAME "Address" %></h2>
                             <% end_if %>
 
                             <% if not $IsFutureStep('shippingaddress') %>
                                 <div class="nsw-accordion__content">
                                     <div class="nsw-wysiwyg-content">
                                         <% if $IsCurrentStep('shippingaddress') %>
-                                            <p><%t SilverShop/Checkout/Step/Address.EnterShippingAddress "Please enter your shipping address details." %></p>
+                                            <p><%t SilverShop\Checkout\Step\Address.EnterShippingAddress "Please enter your shipping address details." %></p>
                                             $OrderForm
                                         <% end_if %>
                                         <% if $IsPastStep('shippingaddress') %>
                                             <div class="row">
                                                 <div class="span4">
                                                     <% with $Cart %>
-                                                        <h4><%t SilverShop/Checkout/Step/Address.ShipTo "Ship To:" %></h4>
+                                                        <h4><%t SilverShop\Checkout\Step\Address.ShipTo "Ship To:" %></h4>
                                                         $ShippingAddress
                                                     <% end_with %>
                                                 </div>
                                                 <div class="span4">
-                                                <h4><%t SilverShop/Checkout/Step/Address.BillTo "Bill To:" %></h4>
+                                                <h4><%t SilverShop\Checkout\Step\Address.BillTo "Bill To:" %></h4>
                                                     <% if $IsCurrentStep('billingaddress') %>
                                                         $OrderForm
                                                     <% else %>
@@ -96,10 +96,10 @@
 
                             <% if $IsPastStep('shippingmethod') %>
                                 <h2 class="nsw-accordion__title"><a class="accordion-toggle" title="choose shipping method" href="$Link('shippingmethod')">
-                                    <%t SilverShop/Checkout/Step/CheckoutStep.Shipping "Shipping" %>
+                                    <%t SilverShop\Checkout\Step\CheckoutStep.Shipping "Shipping" %>
                                 </a></h2>
                             <% else %>
-                                <h2 class="nsw-accordion__title accordion-toggle"><%t SilverShop/Checkout/Step/CheckoutStep.Shipping "Shipping" %></h2>
+                                <h2 class="nsw-accordion__title accordion-toggle"><%t SilverShop\Checkout/Step\CheckoutStep.Shipping "Shipping" %></h2>
                             <% end_if %>
 
                             <% if not $IsFutureStep('shippingmethod') %>
@@ -119,10 +119,10 @@
 
                             <% if $IsPastStep('paymentmethod') %>
                                 <h2 class="nsw-accordion__title"><a class="accordion-toggle" title="choose payment method" href="$Link('paymentmethod')">
-                                    <%t SilverShop/Forms/OrderActionsForm.PaymentMethod "Payment Method" %>
+                                    <%t SilverShop\Forms\OrderActionsForm.PaymentMethod "Payment Method" %>
                                 </a></h2>
                             <% else %>
-                                <h2 class="nsw-accordion__title accordion-toggle"><%t SilverShop/Forms/OrderActionsForm.PaymentMethod "Payment Method" %></h2>
+                                <h2 class="nsw-accordion__title accordion-toggle"><%t SilverShop\Forms\OrderActionsForm.PaymentMethod "Payment Method" %></h2>
                             <% end_if %>
 
                             <% if not $IsFutureStep('paymentmethod') %>
@@ -138,7 +138,7 @@
                                 </div>
                             <% end_if %>
 
-                            <h2 class="nsw-accordion__title"><%t SilverShop/Checkout/Step/CheckoutStep.Summary "Summary" %></h2>
+                            <h2 class="nsw-accordion__title"><%t SilverShop\Checkout\Step\CheckoutStep.Summary "Summary" %></h2>
 
                             <% if not $IsFutureStep('summary') %>
 
@@ -160,7 +160,7 @@
                                                         <% end_if %>
                                                     <% end_loop %>
                                                     <tr>
-                                                        <th colspan="3"><%t SilverShop/Model/Order.GrandTotal "Grand Total" %></th>
+                                                        <th colspan="3"><%t SilverShop\Model\Order.GrandTotal "Grand Total" %></th>
                                                         <td>$Total.Nice $Currency</td>
                                                     </tr>
                                                 </tfoot>

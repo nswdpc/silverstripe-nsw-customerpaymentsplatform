@@ -14,11 +14,11 @@
         <thead>
             <tr>
                 <th scope="col" colspan="2">
-                    <%t SilverShop/Page/Product.SINGULARNAME "Product" %>
+                    <%t SilverShop\Page\Product.SINGULARNAME "Product" %>
                 </th>
-                <th class="center" scope="col"><%t SilverShop/Model/Order.UnitPrice "Unit Price" %></th>
-                <th class="center" scope="col"><%t SilverShop/Model/Order.Quantity "Quantity" %></th>
-                <th class="right" scope="col"><%t SilverShop/Model/Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
+                <th class="center" scope="col"><%t SilverShop\Model\Order.UnitPrice "Unit Price" %></th>
+                <th class="center" scope="col"><%t SilverShop\Model\Order.Quantity "Quantity" %></th>
+                <th class="right" scope="col"><%t SilverShop\Model\Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
             </tr>
         </thead>
         <tbody>

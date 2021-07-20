@@ -1,7 +1,7 @@
 <tfoot>
     <tr>
         <td colspan="4" scope="row" class="subtotal">
-            <%t SilverShop/Model/Order.SubTotal "Sub-total" %>
+            <%t SilverShop\Model\Order.SubTotal "Sub-total" %>
         </td>
         <td class="right">
             $SubTotal.Nice
@@ -21,7 +21,7 @@
     <% end_loop %>
     <tr>
         <td colspan="4" scope="row" class="total">
-            <%t SilverShop/Model/Order.Total "Total" %>
+            <%t SilverShop\Model\Order.Total "Total" %>
         </td>
         <td class="right">
             $Total.Nice

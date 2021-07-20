@@ -28,21 +28,21 @@
                     <ul>
                     <% if $InternalItemID %>
                         <li>
-                            <span class="title"><%t SilverShop/Page/Product.Code "Product Code" %>:</span>
+                            <span class="title"><%t SilverShop\Page\Product.Code "Product Code" %>:</span>
                             <span class="value">{$InternalItemID}</span>
                         </li>
                     <% end_if %>
 
                     <% if $Model %>
                         <li>
-                            <span class="title"><%t SilverShop/Page/Product.Model "Model" %>:</span>
+                            <span class="title"><%t SilverShop\Page\Product.Model "Model" %>:</span>
                             <span class="value">$Model.XML</span>
                         </li>
                     <% end_if %>
 
                     <% if $Size %>
                         <li>
-                            <span class="title"><%t SilverShop/Page/Product.Size "Size" %>:</span>
+                            <span class="title"><%t SilverShop\Page\Product.Size "Size" %>:</span>
                             <span class="value">$Size.XML</span>
                         </li>
                     <% end_if %>
@@ -52,9 +52,9 @@
                     <% if $IsInCart %>
                         <p class="product-numcart">
                             <% if $Item.Quantity == 1 %>
-                                <%t SilverShop/Page/Product.NumItemsInCartSingular "You have this item in your cart" %>
+                                <%t SilverShop\Page\Product.NumItemsInCartSingular "You have this item in your cart" %>
                             <% else %>
-                                <%t SilverShop/Page/Product.NumItemsInCartPlural "You have {Quantity} items in your cart" Quantity=$Item.Quantity %>
+                                <%t SilverShop\Page\Product.NumItemsInCartPlural "You have {Quantity} items in your cart" Quantity=$Item.Quantity %>
                             <% end_if %>
                         </p>
                     <% end_if %>

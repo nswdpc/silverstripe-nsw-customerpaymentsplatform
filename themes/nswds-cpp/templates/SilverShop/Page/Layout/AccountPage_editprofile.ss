@@ -15,7 +15,7 @@
 
 
                 <h2>
-                    <%t SilverShop/Page/AccountPage_EditProfile.Title 'Edit Profile' %>
+                    <%t SilverShop\Page\AccountPage_EditProfile.Title 'Edit Profile' %>
                 </h2>
 
                 $EditAccountForm

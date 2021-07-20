@@ -15,7 +15,7 @@
 
                 <% include NSWDPC/Waratah/PageForm %>
 
-                <h2><%t SilverStripe/Security/Security.LOGIN 'Log In' %></h2>
+                <h2><%t SilverStripe\Security\Security.LOGIN 'Log In' %></h2>
                 $LoginForm
 
             </article>

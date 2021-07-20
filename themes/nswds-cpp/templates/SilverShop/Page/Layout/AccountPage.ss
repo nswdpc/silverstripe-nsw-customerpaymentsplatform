@@ -14,7 +14,7 @@
                 <% include NSWDPC/Waratah/PageContentElemental %>
 
 
-                <h2><%t SilverShop/Page/AccountPage.PastOrders 'Past Orders' %></h2>
+                <h2><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %></h2>
 
                 <% with $Member %>
                     <% if $PastOrders %>

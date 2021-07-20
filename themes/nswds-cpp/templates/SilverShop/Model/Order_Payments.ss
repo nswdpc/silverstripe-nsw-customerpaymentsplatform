@@ -6,13 +6,13 @@
         <caption id="order-Payments">All payment attempts on this order</caption>
         <thead>
             <tr>
-                <th colspan="4"><%t SilverShop/Payment.PaymentsHeadline "Payment(s)" %></th>
+                <th colspan="4"><%t SilverShop\Payment.PaymentsHeadline "Payment(s)" %></th>
             </tr>
             <tr>
-                <th scope="row"><%t SilverStripe/Omnipay/Model/Payment.Date "Date" %></th>
-                <th scope="row"><%t SilverStripe/Omnipay/Model/Payment.Amount "Amount" %></th>
-                <th scope="row"><%t SilverStripe/Omnipay/Model/Payment.db_Status "Payment Status" %></th>
-                <th scope="row"><%t SilverStripe/Omnipay/Model/Payment.db_Gateway "Method" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.Date "Date" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.Amount "Amount" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.db_Status "Payment Status" %></th>
+                <th scope="row"><%t SilverStripe\Omnipay\Model\Payment.db_Gateway "Method" %></th>
             </tr>
         </thead>
         <tbody>
