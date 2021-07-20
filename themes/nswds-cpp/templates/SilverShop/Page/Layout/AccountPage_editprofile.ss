@@ -8,14 +8,14 @@
             <article>
 
                 <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
+                <% include NSWDPC/Waratah/PageContentElemental %>
 
-                <% include PageElemental %>
 
                 <h2>
-                    <%t SilverShop\Page\AccountPage_EditProfile.Title 'Edit Profile' %>
+                    <%t SilverShop/Page/AccountPage_EditProfile.Title 'Edit Profile' %>
                 </h2>
 
                 $EditAccountForm
@@ -33,9 +33,9 @@
 
         <div class="nsw-page-layout__sidebar">
 
-            <% include SilverShop\Includes\SideBar %>
+            <% include SilverShop/Includes/SideBar %>
 
-            <% include SilverShop\Includes\AccountNavigation %>
+            <% include SilverShop/Includes/AccountNavigation %>
 
         </div>
 

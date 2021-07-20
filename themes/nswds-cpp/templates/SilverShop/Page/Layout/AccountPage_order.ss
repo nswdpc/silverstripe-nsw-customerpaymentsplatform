@@ -7,12 +7,12 @@
 
             <article>
 
-                <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                 <div class="nsw-block">
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
+                <% include NSWDPC/Waratah/PageContentElemental %>
 
-                <% include PageElemental %>
 
                 <h2>Order</h2>
 
@@ -23,7 +23,7 @@
                 <% if $Order %>
 
                     <% with $Order %>
-                        <% include SilverShop\Model\Order %>
+                        <% include SilverShop/Model/Order %>
                     <% end_with %>
 
                     $ActionsForm
@@ -35,9 +35,9 @@
 
         <div class="nsw-page-layout__sidebar">
 
-            <% include SilverShop\Includes\SideBar %>
+            <% include SilverShop/Includes/SideBar %>
 
-            <% include SilverShop\Includes\AccountNavigation %>
+            <% include SilverShop/Includes/AccountNavigation %>
         </div>
 
     </div>

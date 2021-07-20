@@ -11,7 +11,7 @@
         <p class="nsw-card__copy">
 
             <% if $Model %>
-                <span><strong><%t SilverShop\Page\Product.Model "Model" %>:</strong> $Model.XML</span>
+                <span><strong><%t SilverShop/Page/Product.Model "Model" %>:</strong> $Model.XML</span>
                 <br>
             <% end_if %>
 

@@ -4,15 +4,15 @@
 
         <div class="sidecart">
 
-            <h3><%t SilverShop\Cart\ShoppingCart.Headline "Cart" %></h3>
+            <h3><%t SilverShop/Cart/ShoppingCart.Headline "Cart" %></h3>
 
             <% if $Cart %>
                 <% with $Cart %>
                     <p>
                         <% if $Items.Plural %>
-                            <%t SilverShop\Cart\ShoppingCart.ItemsInCartPlural 'There are <a href="{link}">{quantity} items</a> in your cart.' link=$Top.CartLink quantity=$Items.Quantity %>
+                            <%t SilverShop/Cart/ShoppingCart.ItemsInCartPlural 'There are <a href="{link}">{quantity} items</a> in your cart.' link=$Top.CartLink quantity=$Items.Quantity %>
                         <% else %>
-                            <%t SilverShop\Cart\ShoppingCart.ItemsInCartSingular 'There is <a href="{link}">1 item</a> in your cart.' link=$Top.CartLink %>
+                            <%t SilverShop/Cart/ShoppingCart.ItemsInCartSingular 'There is <a href="{link}">1 item</a> in your cart.' link=$Top.CartLink %>
                         <% end_if %>
                     </p>
                     <% if $Items.count > 0 %>
@@ -61,7 +61,7 @@
                     <% end_if %>
 
                     <div class="checkout">
-                        <a class="nsw-button nsw-button--primary nsw-button--full-width" href="$Top.CheckoutLink"><%t SilverShop\Cart\ShoppingCart.Checkout "Checkout" %></a>
+                        <a class="nsw-button nsw-button--primary nsw-button--full-width" href="$Top.CheckoutLink"><%t SilverShop/Cart/ShoppingCart.Checkout "Checkout" %></a>
                     </div>
 
                 <% end_with %>

@@ -7,7 +7,7 @@
     <% loop $Order %>
         <tr>
             <td>
-                <% include SilverShop\Model\Order %>
+                <% include SilverShop/Model/Order %>
             </td>
         </tr>
     <% end_loop %>

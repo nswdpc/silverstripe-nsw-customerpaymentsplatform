@@ -5,10 +5,11 @@
 
             <article>
                 <div class="nsw-block">
-                <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
-                <% include PageElemental %>
+                <% include NSWDPC/Waratah/PageContentElemental %>
+
 
                 <div class="checkout">
 
@@ -22,7 +23,7 @@
 
                     <% if $Cart %>
                         <% with $Cart %>
-                            <% include SilverShop\Cart\Cart ShowSubtotals=true %>
+                            <% include SilverShop/Cart/Cart ShowSubtotals=true %>
                         <% end_with %>
 
                         <h2>Order</h2>
@@ -37,7 +38,7 @@
                     <% end_if %>
                 </div>
 
-                <% include PageForm %>
+                <% include NSWDPC/Waratah/PageForm %>
 
             </article>
 

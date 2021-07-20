@@ -7,15 +7,15 @@
             <article>
 
                 <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
+                <% include NSWDPC/Waratah/PageContentElemental %>
 
-                <% include PageElemental %>
 
-                <% include PageForm %>
+                <% include NSWDPC/Waratah/PageForm %>
 
-                <h2><%t SilverStripe\Security\Security.LOGIN 'Log In' %></h2>
+                <h2><%t SilverStripe/Security/Security.LOGIN 'Log In' %></h2>
                 $LoginForm
 
             </article>

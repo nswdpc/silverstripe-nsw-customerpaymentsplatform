@@ -5,7 +5,7 @@
     <table class="nsw-table nsw-table--caption-top">
 
         <caption id="caption-cart">
-            <%t SilverShop\Cart\ShoppingCart.TableSummary "Current contents of your cart." %>
+            <%t SilverShop/Cart/ShoppingCart.TableSummary "Current contents of your cart." %>
         </caption>
 
         <colgroup>
@@ -20,13 +20,13 @@
         <thead>
             <tr>
                 <th scope="col" colspan="2">
-                    <%t SilverShop\Page\Product.SINGULARNAME "Product" %>
+                    <%t SilverShop/Page/Product.SINGULARNAME "Product" %>
                 </th>
-                <th scope="col"><%t SilverShop\Model\Order.UnitPrice "Unit Price" %></th>
-                <th scope="col"><%t SilverShop\Model\Order.Quantity "Quantity" %></th>
-                <th scope="col"><%t SilverShop\Model\Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
+                <th scope="col"><%t SilverShop/Model/Order.UnitPrice "Unit Price" %></th>
+                <th scope="col"><%t SilverShop/Model/Order.Quantity "Quantity" %></th>
+                <th scope="col"><%t SilverShop/Model/Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
                 <% if $Editable %>
-                    <th scope="col"><%t SilverShop\Generic.Remove "Remove" %></th>
+                    <th scope="col"><%t SilverShop/Generic.Remove "Remove" %></th>
                 <% end_if %>
             </tr>
         </thead>
@@ -53,7 +53,7 @@
                         </p>
                         <% if $SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
                         <% if $Product.Variations && $Up.Editable %>
-                            <%t SilverShop\Generic.Change "Change" %>: $VariationField
+                            <%t SilverShop/Generic.Change "Change" %>: $VariationField
                         <% end_if %>
                     </td>
                     <td>
@@ -87,7 +87,7 @@
         <tfoot>
             <tr class="subtotal">
                 <th colspan="4" scope="row">
-                    <%t SilverShop\Model\Order.SubTotal "Sub-total" %>
+                    <%t SilverShop/Model/Order.SubTotal "Sub-total" %>
                 </th>
                 <td>
                     {$SubTotal.Nice}
@@ -136,7 +136,7 @@
                 <% end_if %>
                 <tr>
                     <th colspan="4" scope="row">
-                        <%t SilverShop\Model\Order.Total "Total" %>
+                        <%t SilverShop/Model/Order.Total "Total" %>
                     </th>
                     <td>
                         <span class="value">$Total.Nice</span>

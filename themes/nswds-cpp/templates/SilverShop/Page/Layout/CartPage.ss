@@ -6,11 +6,11 @@
             <article>
 
                 <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
+                <% include NSWDPC/Waratah/PageContentElemental %>
 
-                <% include PageElemental %>
 
                 <% if $Cart %>
 
@@ -18,7 +18,7 @@
                         $CartForm
                     <% else %>
                         <% with $Cart %>
-                            <% include SilverShop\Cart\Cart Editable=true %>
+                            <% include SilverShop/Cart/Cart Editable=true %>
                         <% end_with %>
                     <% end_if %>
 
@@ -40,7 +40,7 @@
                     <% include nswds/InPageNotification Icon='shopping_cart', Level='info', MessageTitle='Empty', Message='There are no items in your cart' %>
                 <% end_if %>
 
-                <% include PageForm %>
+                <% include NSWDPC/Waratah/PageForm %>
 
             </article>
 

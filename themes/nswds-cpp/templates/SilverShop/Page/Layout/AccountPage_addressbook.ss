@@ -5,13 +5,12 @@
         <main id="main-content" class="nsw-page-layout__main">
 
             <article>
-
                 <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
+                <% include NSWDPC/Waratah/PageContentElemental %>
 
-                <% include PageElemental %>
 
                 <% if $CurrentMember %>
 
@@ -20,7 +19,7 @@
                         <% if $AddressBook.Count == 0 %>
 
                             <h2>
-                                <%t SilverShop\Page\AccountPage_AddressBook.No_Addresses_Title 'No Addresses' %>
+                                <%t SilverShop/Page/AccountPage_AddressBook.No_Addresses_Title 'No Addresses' %>
                             </h2>
 
                             <% include nswds/InPageNotification nswds/Icon='info', Level='warning', MessageTitle='Address book', Message='No addresses found.' %>
@@ -28,7 +27,7 @@
                         <% else %>
 
                             <h2>
-                                <%t SilverShop\Page\AccountPage_AddressBook.Addresses_Title 'Address book' %>
+                                <%t SilverShop/Page/AccountPage_AddressBook.Addresses_Title 'Address book' %>
                             </h2>
 
                             <div class="nsw-table-responsive" role="region" aria-labelledby="saved-addresses">
@@ -85,13 +84,13 @@
 
                                                 <% if $ID != $Top.CurrentMember.DefaultShippingAddressID %>
                                                     <a href="$Top.Link('setdefaultshipping')/{$ID}" class="nsw-button nsw-button--primary">
-                                                        <%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultShipping 'Make Default Shipping' %>
+                                                        <%t SilverShop/Page/AccountPage_AddressBook.MakeDefaultShipping 'Make Default Shipping' %>
                                                     </a>
                                                 <% end_if %>
 
                                                 <% if $ID != $Top.CurrentMember.DefaultBillingAddressID %>
                                                     <a href="$Top.Link('setdefaultbilling')/{$ID}" class="nsw-button nsw-button--primary">
-                                                        <%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultBilling 'Make Default Billing' %>
+                                                        <%t SilverShop/Page/AccountPage_AddressBook.MakeDefaultBilling 'Make Default Billing' %>
                                                     </a>
                                                 <% end_if %>
 
@@ -118,7 +117,7 @@
                 <% end_if %>
 
                 <h2>
-                    <%t SilverShop\Page\AccountPage_AddressBook.CreateNewTitle 'Create New Address' %>
+                    <%t SilverShop/Page/AccountPage_AddressBook.CreateNewTitle 'Create New Address' %>
                 </h2>
 
                 {$CreateAddressForm}
@@ -129,9 +128,9 @@
 
         <div class="nsw-page-layout__sidebar">
 
-            <% include SilverShop\Includes\SideBar %>
+            <% include SilverShop/Includes/SideBar %>
 
-            <% include SilverShop\Includes\AccountNavigation %>
+            <% include SilverShop/Includes/AccountNavigation %>
 
         </div>
 

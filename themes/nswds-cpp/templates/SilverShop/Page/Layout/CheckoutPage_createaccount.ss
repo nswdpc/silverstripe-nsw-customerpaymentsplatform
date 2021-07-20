@@ -7,13 +7,13 @@
             <article>
 
                 <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
+                <% include NSWDPC/Waratah/PageContentElemental %>
 
-                <% include PageElemental %>
 
-                <% include PageForm %>
+                <% include NSWDPC/Waratah/PageForm %>
 
             </article>
 

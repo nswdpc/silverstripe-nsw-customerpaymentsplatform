@@ -8,15 +8,15 @@
             <article>
 
                 <div class="nsw-block">
-                    <% include PageContentTitle %>
-                    <% include PageContentAbstract %>
+                    <% include NSWDPC/Waratah/PageContentTitle %>
+                    <% include NSWDPC/Waratah/PageContentAbstract %>
                 </div>
+                <% include NSWDPC/Waratah/PageContentElemental %>
 
-                <% include PageElemental %>
 
                 <% if $Order %>
                     <% with $Order %>
-                        <h2><%t SilverShop\Model\Order.OrderHeadline "Order #{OrderNo} {OrderDate}" OrderNo=$Reference OrderDate=$Created.Nice %></h2>
+                        <h2><%t SilverShop/Model/Order.OrderHeadline "Order #{OrderNo} {OrderDate}" OrderNo=$Reference OrderDate=$Created.Nice %></h2>
                     <% end_with %>
                 <% end_if %>
 
@@ -27,10 +27,10 @@
                 <% if $Order %>
 
                     <% with $Order %>
-                        <% include SilverShop\Model\Order %>
+                        <% include SilverShop/Model/Order %>
                     <% end_with %>
 
-                    <% include PageForm %>
+                    <% include NSWDPC/Waratah/PageForm %>
 
                 <% end_if %>
 
