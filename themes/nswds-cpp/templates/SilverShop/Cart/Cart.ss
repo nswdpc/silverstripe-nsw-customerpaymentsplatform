@@ -150,5 +150,5 @@
     </table>
 </div>
 <% else %>
-    <% include nswds/InPageNotification Icon='shopping_cart', Level='warning', MessageTitle='Empty', Message='There are no items in your cart' %>
+    <% include nswds/Callout Icon='shopping_cart', Title='Empty cart', Content='There are no items in your cart' %>
 <% end_if %>
