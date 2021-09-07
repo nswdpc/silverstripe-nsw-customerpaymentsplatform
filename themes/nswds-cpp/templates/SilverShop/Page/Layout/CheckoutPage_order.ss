@@ -1,3 +1,4 @@
+<%-- Base: content page with article --%>
 
 <div class="nsw-container nsw-p-top-sm nsw-p-bottom-lg">
 
@@ -5,38 +6,34 @@
 
         <main id="main-content" class="nsw-page-layout__main">
 
-            <article>
+            <% include NSWDPC/Waratah/PageContentTitle %>
+            <% include NSWDPC/Waratah/PageContentAbstract %>
+            <% include NSWDPC/Waratah/PageElemental %>
 
-                <div class="nsw-block">
-                    <% include NSWDPC/Waratah/PageContentTitle %>
-                    <% include NSWDPC/Waratah/PageContentAbstract %>
-                </div>
-                <% include NSWDPC/Waratah/PageContentElemental %>
+            <% if $Order %>
+                <% with $Order %>
+                    <h2><%t SilverShop\Model\Order.OrderHeadline "Order #{OrderNo} {OrderDate}" OrderNo=$Reference OrderDate=$Created.Nice %></h2>
+                <% end_with %>
+            <% end_if %>
 
+            <% if $Message %>
+                <% include nswds/InPageNotification InPageNotification_Icon='info', InPageNotification_Level='info', InPageNotification_Title='Empty', InPageNotification_Content=$Message %>
+            <% end_if %>
 
-                <% if $Order %>
-                    <% with $Order %>
-                        <h2><%t SilverShop\Model\Order.OrderHeadline "Order #{OrderNo} {OrderDate}" OrderNo=$Reference OrderDate=$Created.Nice %></h2>
-                    <% end_with %>
-                <% end_if %>
+            <% if $Order %>
 
-                <% if $Message %>
-                    <% include nswds/InPageNotification Icon='info', Level='info', MessageTitle='Empty', Message=$Message %>
-                <% end_if %>
+                <% with $Order %>
+                    <% include SilverShop/Model/Order %>
+                <% end_with %>
 
-                <% if $Order %>
+                <% include NSWDPC/Waratah/PageForm %>
 
-                    <% with $Order %>
-                        <% include SilverShop/Model/Order %>
-                    <% end_with %>
-
-                    <% include NSWDPC/Waratah/PageForm %>
-
-                <% end_if %>
-
-            </article>
+            <% end_if %>
 
         </main>
 
+        <div class="nsw-page-layout__sidebar"></div>
+
     </div>
+
 </div>

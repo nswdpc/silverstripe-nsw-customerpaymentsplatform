@@ -38,7 +38,7 @@
                         <% if $Image %>
                             <div class="image">
                                 <a href="$Link">
-                                    <% include nswds/Media Image=$Image, ImageWidth=100 %>
+                                    <% include nswds/Media Media_Image=$Image, Media_ImageWidth=100 %>
                                 </a>
                             </div>
                         <% end_if %>
@@ -75,7 +75,7 @@
                                 {$RemoveField}
                             <% else %>
                                 <a href="$removeallLink">
-                                    <% include nswds/Icon Icon='remove' %>
+                                    <% include nswds/Icon Icon_Icon='remove' %>
                                 </a>
                             <% end_if %>
                         </td>
@@ -116,7 +116,7 @@
                                         <% if $CanRemove %>
                                             <strong>
                                                 <a class="ajaxQuantityLink" href="$removeLink">
-                                                    <% include nswds/Icon Icon='remove' %>
+                                                    <% include nswds/Icon Icon_Icon='remove' %>
                                                 </a>
                                             </strong>
                                         <% end_if %>
@@ -150,5 +150,5 @@
     </table>
 </div>
 <% else %>
-    <% include nswds/Callout Icon='shopping_cart', Title='Empty cart', Content='There are no items in your cart' %>
+    <% include nswds/InPageNotification InPageNotification_Level='info', InPageNotification_Icon='shopping_cart', InPageNotification_Title='Empty cart', InPageNotification_Content='There are no items in your cart' %>
 <% end_if %>

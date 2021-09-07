@@ -1,17 +1,14 @@
+<%-- Base: content page with article --%>
+
 <div class="nsw-container nsw-p-top-sm nsw-p-bottom-lg">
 
     <div class="nsw-page-layout">
 
-    <main id="main-content" class="nsw-page-layout__main">
+        <main id="main-content" class="nsw-page-layout__main">
 
-        <article>
-
-            <div class="nsw-block">
-                <% include NSWDPC/Waratah/PageContentTitle %>
-                <% include NSWDPC/Waratah/PageContentAbstract %>
-            </div>
-            <% include NSWDPC/Waratah/PageContentElemental %>
-
+            <% include NSWDPC/Waratah/PageContentTitle %>
+            <% include NSWDPC/Waratah/PageContentAbstract %>
+            <% include NSWDPC/Waratah/PageElemental %>
 
             <% if $Products %>
 
@@ -29,13 +26,11 @@
 
             <% include NSWDPC/Waratah/PageForm %>
 
-        </article>
+        </main>
 
-    </main>
-
-    <div class="nsw-page-layout__sidebar">
-        <% include SilverShop/Includes/SideBar %>
-    </div>
+        <div class="nsw-page-layout__sidebar">
+            <% include SilverShop/Includes/SideBar %>
+        </div>
 
     </div>
 

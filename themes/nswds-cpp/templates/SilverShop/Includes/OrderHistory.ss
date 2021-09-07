@@ -30,7 +30,7 @@
                 <td>$Total.Nice</td>
                 <td>$StatusI18N</td>
                 <td>
-                    <a href="$Link"><% include nswds/Icon Icon=pageview %></a>
+                    <a href="$Link"><% include nswds/Icon Icon_Icon=pageview %></a>
                 </td>
             </tr>
         <% end_loop %>

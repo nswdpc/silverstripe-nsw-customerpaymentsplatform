@@ -1,3 +1,4 @@
+<%-- Base: content page with article --%>
 
 <div class="nsw-container nsw-p-top-sm nsw-p-bottom-lg">
 
@@ -5,29 +6,23 @@
 
         <main id="main-content" class="nsw-page-layout__main">
 
-            <article>
-
-                <div class="nsw-block">
-                    <% include NSWDPC/Waratah/PageContentTitle %>
-                    <% include NSWDPC/Waratah/PageContentAbstract %>
-                </div>
-                <% include NSWDPC/Waratah/PageContentElemental %>
+            <% include NSWDPC/Waratah/PageContentTitle %>
+            <% include NSWDPC/Waratah/PageContentAbstract %>
+            <% include NSWDPC/Waratah/PageElemental %>
 
 
-                <h2>
-                    <%t SilverShop\Page\AccountPage_EditProfile.Title 'Edit Profile' %>
-                </h2>
+            <h2>
+                <%t SilverShop\Page\AccountPage_EditProfile.Title 'Edit Profile' %>
+            </h2>
 
-                $EditAccountForm
+            $EditAccountForm
 
 
-                <h2>
-                    Change password
-                </h2>
+            <h2>
+                Change password
+            </h2>
 
-                $ChangePasswordForm
-
-            </article>
+            $ChangePasswordForm
 
         </main>
 

@@ -1,23 +1,20 @@
+<%-- Base: content page with article --%>
+
 <div class="nsw-container nsw-p-top-sm nsw-p-bottom-lg">
 
     <div class="nsw-page-layout">
 
         <main id="main-content" class="nsw-page-layout__main">
 
-            <article>
+            <% include NSWDPC/Waratah/PageContentTitle %>
+            <% include NSWDPC/Waratah/PageContentAbstract %>
+            <% include NSWDPC/Waratah/PageElemental %>
 
-                <div class="nsw-block">
-                    <% include NSWDPC/Waratah/PageContentTitle %>
-                    <% include NSWDPC/Waratah/PageContentAbstract %>
-                </div>
-                <% include NSWDPC/Waratah/PageContentElemental %>
-
-
-                <% include NSWDPC/Waratah/PageForm %>
-
-            </article>
+            <% include NSWDPC/Waratah/PageForm %>
 
         </main>
+
+        <div class="nsw-page-layout__sidebar"></div>
 
     </div>
 
