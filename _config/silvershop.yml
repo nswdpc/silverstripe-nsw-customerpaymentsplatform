@@ -27,6 +27,8 @@ SilverShop\Page\Product:
 
 SilverShop\Page\ProductCategory:
   page_length: 3
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\SilvershopProductCategoryExtension'
 
 SilverShop\Extension\ShopConfigExtension:
   base_currency: 'AUD'

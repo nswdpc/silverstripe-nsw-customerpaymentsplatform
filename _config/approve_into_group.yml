@@ -1,0 +1,11 @@
+---
+Name: nswdpc-cpp-approve-into-groups
+---
+SilverStripe\Security\Group:
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\RequestAccessToPurchaseExtension'
+NSWDPC\Payments\NSWGOVCPP\Agency\PurchaseApprovalGroupPage:
+  approval_email_content: |
+    Good news, your request to purchase items was approved.
+
+    When you next sign in, you will automatically be given access to requested items.
