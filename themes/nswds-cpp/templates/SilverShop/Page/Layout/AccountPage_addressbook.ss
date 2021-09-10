@@ -26,101 +26,127 @@
 
                     <% else %>
 
-                        <h2>
-                            <%t SilverShop\Page\AccountPage_AddressBook.Addresses_Title 'Address book' %>
-                        </h2>
 
-                        <div class="nsw-table-responsive" role="region" aria-labelledby="saved-addresses">
+                        <% if $Top.CurrentAddress %>
 
-                            <table class="nsw-table nsw-table--striped nsw-table--caption-top">
+                            <h2>
+                                <%t SilverShop\Page\AccountPage_AddressBook.EditAddress 'Edit address' %>
+                            </h2>
 
-                                <caption id="saved-addresses">
-                                    Your saved addresses
-                                </caption>
+                            <% include nswds/Callout Callout_Icon='warning', Callout_Title='Information', Callout_Level='warning', Callout_Content='Editing this address will change it for all previous orders' %>
 
-                                <thead>
-                                    <tr>
-                                        <th colspan="2">Address</th>
-                                        <td>Default shipping</th>
-                                        <td>Default billing</th>
-                                        <td>Actions</th>
-                                    </tr>
-                                </thead>
+                            {$Top.EditAddressForm}
 
-                                <tbody>
+                        <% else %>
 
-                                <% loop $AddressBook %>
+                            <h2>
+                                <%t SilverShop\Page\AccountPage_AddressBook.Addresses_Title 'Address book' %>
+                            </h2>
 
-                                    <tr>
+                            <div class="nsw-table-responsive" role="region" aria-labelledby="saved-addresses">
 
-                                        <td>
-                                            <% if $Name %>$Name<br><% end_if %>
-                                            <% if $Company %>$Company<br><% end_if %>
-                                            <% if $Address %>$Address<br><% end_if %>
-                                            <% if $AddressLine2 %>$AddressLine2<br><% end_if %>
-                                            <% if $City %>$City<br/><% end_if %>
-                                            <% if $PostalCode %>$PostalCode<br/><% end_if %>
-                                            <% if $State %>$State<br/><% end_if %>
-                                            <% if $Country %>$Country<br/><% end_if %>
-                                        </td>
-                                        <td>
-                                            <% if $Phone %>$Phone<% end_if %>
-                                        </td>
-                                        <td>
+                                <table class="nsw-table nsw-table--striped nsw-table--caption-top">
 
-                                            <% if $ID == $Top.CurrentMember.DefaultShippingAddressID %>
-                                                <% include nswds/Icon Icon_Icon='thumb_up' %>
-                                            <% end_if %>
-                                        </td>
-                                        <td>
+                                    <caption id="saved-addresses">
+                                        Your saved addresses
+                                    </caption>
 
-                                            <% if $ID == $Top.CurrentMember.DefaultBillingAddressID %>
-                                                <% include nswds/Icon Icon_Icon='thumb_up' %>
-                                            <% end_if %>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">Address</th>
+                                            <td>Default shipping</th>
+                                            <td>Default billing</th>
+                                        </tr>
+                                    </thead>
 
-                                        </td>
-                                        <td>
+                                    <tbody>
 
+                                    <% loop $AddressBook %>
 
-                                            <% if $ID != $Top.CurrentMember.DefaultShippingAddressID %>
-                                                <a href="$Top.Link('setdefaultshipping')/{$ID}" class="nsw-button nsw-button--primary">
-                                                    <%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultShipping 'Make Default Shipping' %>
+                                        <tr>
+
+                                            <td>
+                                                <% if $Name %>$Name<br><% end_if %>
+                                                <% if $Company %>$Company<br><% end_if %>
+                                                <% if $Address %>$Address<br><% end_if %>
+                                                <% if $AddressLine2 %>$AddressLine2<br><% end_if %>
+                                                <% if $City %>$City<br/><% end_if %>
+                                                <% if $PostalCode %>$PostalCode<br/><% end_if %>
+                                                <% if $State %>$State<br/><% end_if %>
+                                                <% if $Country %>$Country<br/><% end_if %>
+
+                                                <a href="{$EditLink}" class="nsw-button nsw-button--secondary">
+                                                    Edit
                                                 </a>
-                                            <% end_if %>
 
-                                            <% if $ID != $Top.CurrentMember.DefaultBillingAddressID %>
-                                                <a href="$Top.Link('setdefaultbilling')/{$ID}" class="nsw-button nsw-button--primary">
-                                                    <%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultBilling 'Make Default Billing' %>
-                                                </a>
-                                            <% end_if %>
+                                            </td>
+                                            <td>
+                                                <% if $Phone %>$Phone<% end_if %>
+                                            </td>
+                                            <td>
 
-                                            <a href="$Top.Link('deleteaddress')/{$ID}" class="nsw-button nsw-button--danger">
-                                                Remove
-                                            </a>
+                                                <% if $ID == $Up.DefaultShippingAddressID %>
+                                                    Yes
+                                                <% else %>
+                                                    No
+                                                <% end_if %>
+                                            </td>
+                                            <td>
 
-                                        </td>
+                                                <% if $ID == $Up.DefaultBillingAddressID %>
+                                                    Yes
+                                                <% else %>
+                                                    No
+                                                <% end_if %>
 
-                                    </tr>
+                                            </td>
 
-                                <% end_loop %>
+                                        </tr>
 
-                                </tbody>
+                                    <% end_loop %>
 
-                            </table>
+                                    </tbody>
 
-                        </div>
+                                </table>
+
+                            </div>
+
+                            <%-- allow default address selection --%>
+                            <% if $Top.DefaultAddressForm %>
+
+                            <h2>
+                                <%t SilverShop\Page\AccountPage_AddressBook.SelectDefaultAddresses 'Select default addresses' %>
+                            </h2>
+
+                            {$Top.DefaultAddressForm}
+
+                            <% end_if %>
+
+
+                        <%-- end not editing  --%>
+                        <% end_if %>
+
+                    <% end_if %>
+                    <%-- end address book count = 0 --%>
+
+
+                    <%-- create an address --%>
+                    <% if $Top.CreateAddressForm && not $Top.CurrentAddress %>
+
+                    <h2>
+                        <%t SilverShop\Page\AccountPage_AddressBook.CreateNewTitle 'Create New Address' %>
+                    </h2>
+
+                    {$Top.CreateAddressForm}
 
                     <% end_if %>
 
+                    <%-- current member --%>
                 <% end_with %>
 
             <% end_if %>
+            <%-- end no member --%>
 
-            <h2>
-                <%t SilverShop\Page\AccountPage_AddressBook.CreateNewTitle 'Create New Address' %>
-            </h2>
-
-            {$CreateAddressForm}
 
         </main>
 
