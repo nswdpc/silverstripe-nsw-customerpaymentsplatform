@@ -67,7 +67,7 @@
                 <% end_with %>
 
             <% else %>
-                <% include nswds/Callout Icon='shopping_cart', Title='Empty cart', Content='There are no items in your cart' %>
+                <% include nswds/Callout Callout_Icon='shopping_cart', Callout_Title='Empty cart', Callout_Content='There are no items in your cart' %>
             <% end_if %>
 
         </div>
