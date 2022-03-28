@@ -1,6 +1,5 @@
 /client/node_modules
 /vendor/
 .DS_Store
-/.php_cs.cache
 /tests/codeception/tests/_data/
 /tests/codeception/tests/_output/
