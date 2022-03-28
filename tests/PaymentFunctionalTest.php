@@ -43,7 +43,7 @@ class PaymentFunctionalTest extends FunctionalTest {
         __DIR__ . '/support/fixtures/PaymentCompletion.yml'
     ];
 
-    public function setUp() {
+    public function setUp() : void {
         // trigger test configuration
         Environment::setEnv('USE_FAKE_GATEwAY', 1);
         parent::setUp();
