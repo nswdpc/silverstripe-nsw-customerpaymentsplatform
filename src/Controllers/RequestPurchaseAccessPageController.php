@@ -46,6 +46,11 @@ class RequestPurchaseAccessPageController extends \PageController {
      */
     public function RequestAccessForm() {
 
+        $member = Security::getCurrentUser();
+        if(!$member) {
+            return null;
+        }
+
         $calloutField = HTMLReadonlyField::create(
             'RequestAccessCallout',
             _t(
@@ -62,10 +67,45 @@ class RequestPurchaseAccessPageController extends \PageController {
             $calloutField = $calloutField->setHint('callout')->setHintIcon('info');
         }
 
-        $form = Form::create(
-            $this,
-            'RequestAccessForm',
-            Fieldlist::create(
+
+        $fields = $actions = $validator = null;
+
+        $requestAccessGroupCode = PurchaseApprovalGroupPage::getPurchaseRequestAccessGroup();
+        $hasAccessGroupCode = PurchaseApprovalGroupPage::getHasAccessToPurchaseGroup();
+        $inRequestAccessGroup = $member->inGroup($requestAccessGroupCode);
+        $inHasAccessGroup = $member->inGroup($hasAccessGroupCode);
+
+        if( $inRequestAccessGroup ) {
+            $fields = Fieldlist::create(
+               HTMLReadonlyField::create(
+                   'RequestPending',
+                   _t(
+                       'payments.REQUEST_ACCESS_PENDING',
+                       'Pending'
+                   ),
+                   _t(
+                       'payments.REQUEST_ACCESS_PENDING_CONTENT',
+                       'Your request is pending approval.'
+                   )
+               )
+           );
+        } else if( $inHasAccessGroup ) {
+            $fields = Fieldlist::create(
+               HTMLReadonlyField::create(
+                   'RequestApproved',
+                   _t(
+                       'payments.REQUEST_ACCESS_APPROVED',
+                       'Approved'
+                   ),
+                   _t(
+                       'payments.REQUEST_ACCESS_PENDING_CONTENT',
+                       'You have purchase access. Please browse for items.'
+                   )
+               )
+           );
+        } else {
+
+            $fields = Fieldlist::create(
                 $calloutField,
                 TextareaField::create(
                     'RequestAccessReason',
@@ -74,8 +114,9 @@ class RequestPurchaseAccessPageController extends \PageController {
                         'Please provide a reason for requesting access'
                     )
                 )->setAttribute('required','required')
-            ),
-            Fieldlist::create(
+            );
+
+            $actions = Fieldlist::create(
                 FormAction::create(
                     'doChanges',
                     _t(
@@ -83,8 +124,17 @@ class RequestPurchaseAccessPageController extends \PageController {
                         'Request access'
                     )
                 )
-            ),
-            RequiredFields::create(['RequestAccessReason'])
+            );
+
+            $validator = RequiredFields::create(['RequestAccessReason']);
+        }
+
+        $form = Form::create(
+            $this,
+            'RequestAccessForm',
+            $fields,
+            $actions,
+            $validator
         );
 
         /*
