@@ -9,6 +9,7 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
@@ -66,7 +67,10 @@ class PurchaseApprovalGroupPageController extends \PageController {
                     'Approve',
                     _t(
                         'payments.USERS_TO_APPROVE',
-                        'Give access to a user'
+                        'Give access to someone ({count} in list)',
+                        [
+                            'count' => count($requestingAccess)
+                        ]
                     ),
                     $requestingAccess
                 )->setEmptyString(
@@ -80,7 +84,10 @@ class PurchaseApprovalGroupPageController extends \PageController {
                     'Unapprove',
                     _t(
                         'payments.USERS_TO_UNAPPROVE',
-                        'Remove access for a user'
+                        'Remove access for someone ({count} in list)',
+                        [
+                            'count' => count($hasAccess)
+                        ]
                     ),
                     $hasAccess
                 )->setEmptyString(
@@ -109,128 +116,185 @@ class PurchaseApprovalGroupPageController extends \PageController {
      */
     public function doChanges($data, $form) {
 
-        $users = $this->data()->RequestingMembers();
+        try {
 
-        if(!$users ||$users->count() == 0) {
-            $form->sessionError(
-                _t(
-                    'payments.NO_USERS_TO_APPROVE',
-                    'There are no users to approve'
-                )
-            );
-            return $this->redirectBack();
-        }
+            $users = $this->data()->RequestingMembers();
 
-        // Group representing users that have access
-        $hasAccessGroupCode = PurchaseApprovalGroupPage::getHasAccessToPurchaseGroup();
-        $hasAccessGroup = null;
-        if($hasAccessGroupCode) {
-            $hasAccessGroup = Group::get()->filter(['Code' => $hasAccessGroupCode])->first();
-        }
-
-        // Group representing users that are requesting access
-        $requestAccessGroupCode = PurchaseApprovalGroupPage::getPurchaseRequestAccessGroup();
-        $requestAccessGroup = null;
-        if($requestAccessGroupCode) {
-            $requestAccessGroup = Group::get()->filter(['Code' => $requestAccessGroupCode])->first();
-        }
-
-        // A user to approve
-        if(!empty($data['Approve'])) {
-
-            // check user is valid
-            $toApprove = $users->byId( $data['Approve'] );
-            if(empty($toApprove['ID'])) {
-                $form->sessionError(
+            if(!$users ||$users->count() == 0) {
+                throw new ValidationException(
                     _t(
-                        'payments.USER_TO_APPROVE_NO',
-                        'The user selected cannot be approved'
+                        'payments.NO_USERS_TO_APPROVE',
+                        'There are no users to approve'
                     )
                 );
-            } else {
-
-                //
-                $member = Member::get()->byId($data['Approve']);
-
-                // Switch groups
-                if(!empty($hasAccessGroup->ID)) {
-                    // add to has access group
-                    $member->Groups()->add( $hasAccessGroup );
-                }
-
-                if(!empty($requestAccessGroup->ID)) {
-                    // remove requst access group
-                    $member->Groups()->remove( $requestAccessGroup );
-                }
-
-                $form->sessionMessage(
-                    _t(
-                        'payments.APPROVED_TO_PURCHASE',
-                        'Access was given to {firstname} {surname}',
-                        [
-                            'firstname' => $member->FirstName,
-                            'surname' => $member->Surname
-                        ]
-                    ),
-                    ValidationResult::TYPE_GOOD
-                );
-
-                $this->sendApprovalChangeEmail( $member );
-
             }
 
-        }
+            // Group representing users that have access
+            $hasAccessGroupCode = PurchaseApprovalGroupPage::getHasAccessToPurchaseGroup();
+            $hasAccessGroup = null;
+            if($hasAccessGroupCode) {
+                $hasAccessGroup = Group::get()->filter(['Code' => $hasAccessGroupCode])->first();
+            }
 
-        if(!empty($data['Unapprove'])) {
-
-            $toUnapprove = $users->byId( $data['Unapprove'] );
-            if(empty($toUnapprove['ID'])) {
-                $form->sessionError(
+            if(empty($hasAccessGroup->ID)) {
+                throw new \Exception(
                     _t(
-                        'payments.USER_TO_APPROVE_NO',
-                        'The user selected cannot have access removed'
+                        'payments.NO_APPROVED_ACCESS_GROUP',
+                        'There is no approved purchase access group'
                     )
                 );
-            } else {
+            }
 
-                $member = Member::get()->byId($data['Unapprove']);
-                if(!empty($hasAccessGroup->ID)) {
+            if($hasAccessGroup->Permissions()->count() > 0) {
+                throw new \Exception(
+                    _t(
+                        'payments.APPROVED_ACCESS_GROUP_HAS_PERMISSIONS',
+                        'The approved access group cannot have permissions'
+                    )
+                );
+            }
+
+            // Group representing users that are requesting access
+            $requestAccessGroupCode = PurchaseApprovalGroupPage::getPurchaseRequestAccessGroup();
+            $requestAccessGroup = null;
+            if($requestAccessGroupCode) {
+                $requestAccessGroup = Group::get()->filter(['Code' => $requestAccessGroupCode])->first();
+            }
+
+            if(empty($requestAccessGroup->ID)) {
+                throw new \Exception(
+                    _t(
+                        'payments.NO_REQUEST_ACCESS_GROUP',
+                        'There is no request purchase access group'
+                    )
+                );
+            }
+
+            if($requestAccessGroup->Permissions()->count() > 0) {
+                throw new \Exception(
+                    _t(
+                        'payments.REQUEST_ACCESS_GROUP_HAS_PERMISSIONS',
+                        'The request access group cannot have permissions'
+                    )
+                );
+            }
+
+            // A user to approve
+            if(!empty($data['Approve'])) {
+
+                // check user is valid
+                $toApprove = $users->byId( $data['Approve'] );
+                if(empty($toApprove['ID'])) {
+                    throw new ValidationException(
+                        _t(
+                            'payments.USER_TO_APPROVE_NO',
+                            'The user selected cannot be approved'
+                        )
+                    );
+                } else {
+
+                    //
+                    $member = Member::get()->byId($data['Approve']);
+
+                    // Switch groups
                     if(!empty($hasAccessGroup->ID)) {
                         // add to has access group
-                        $member->Groups()->add( $requestAccessGroup );
+                        $member->Groups()->add( $hasAccessGroup );
                     }
 
                     if(!empty($requestAccessGroup->ID)) {
-                        // add to has access group
-                        $member->Groups()->remove( $hasAccessGroup );
+                        // remove requst access group
+                        $member->Groups()->remove( $requestAccessGroup );
                     }
-                }
 
-                $form->sessionMessage(
-                    _t(
-                        'payments.APPROVED_TO_PURCHASE',
-                        'Access was removed for {firstname} {surname}',
-                        [
-                            'firstname' => $member->FirstName,
-                            'surname' => $member->Surname
-                        ]
-                    ),
-                    ValidationResult::TYPE_GOOD
-                );
+                    $form->sessionMessage(
+                        _t(
+                            'payments.APPROVED_TO_PURCHASE',
+                            'Access was given to {firstname} {surname}',
+                            [
+                                'firstname' => $member->FirstName,
+                                'surname' => $member->Surname
+                            ]
+                        ),
+                        ValidationResult::TYPE_GOOD
+                    );
+
+                    try {
+                        $this->sendApprovalChangeEmail( $member );
+                    } catch (\Exception $e) {
+                        Logger::log("Failed to send purchase request approval email to selected member");
+                    }
+
+                }
 
             }
 
-        }
+            if(!empty($data['Unapprove'])) {
 
-        return $this->redirectBack();
+                $toUnapprove = $users->byId( $data['Unapprove'] );
+                if(empty($toUnapprove['ID'])) {
+                    throw new ValidationException(
+                        _t(
+                            'payments.USER_TO_APPROVE_NO',
+                            'The user selected cannot have access removed'
+                        )
+                    );
+                } else {
+
+                    $member = Member::get()->byId($data['Unapprove']);
+                    if(!empty($hasAccessGroup->ID)) {
+                        if(!empty($hasAccessGroup->ID)) {
+                            // add to has access group
+                            $member->Groups()->add( $requestAccessGroup );
+                        }
+
+                        if(!empty($requestAccessGroup->ID)) {
+                            // add to has access group
+                            $member->Groups()->remove( $hasAccessGroup );
+                        }
+                    }
+
+                    $form->sessionMessage(
+                        _t(
+                            'payments.APPROVED_TO_PURCHASE',
+                            'Access was removed for {firstname} {surname}',
+                            [
+                                'firstname' => $member->FirstName,
+                                'surname' => $member->Surname
+                            ]
+                        ),
+                        ValidationResult::TYPE_GOOD
+                    );
+
+                }
+
+            }
+
+        } catch (ValidationException $e) {
+            $form->sessionError(
+                $e->getMessage(),
+                ValidationResult::TYPE_BAD
+            );
+        } catch (\Exception $e) {
+            Logger::log("Failed to perform request approval. Error=" . $e->getMessage(), "NOTICE");
+            $form->sessionError(
+                _t(
+                    'payments.FAILED_TO_PERFORM_APPROVAL_REQUEST',
+                    'Sorry, this request cannot be made at the current time due to a system error. Please try again later.'
+                ),
+                ValidationResult::TYPE_BAD
+            );
+        } finally {
+            return $this->redirectBack();
+        }
 
     }//end doChanges
 
     /**
-     * Send the approval email
+     * Send the approval email - when a member is approved
      */
     private function sendApprovalChangeEmail(Member $member) {
-        $site_config = SiteConfig::current_site_config();
+        $siteConfig = SiteConfig::current_site_config();
         $to = [
             $member->Email => "{$member->FirstName} {$member->Surname}"
         ];
@@ -241,7 +305,7 @@ class PurchaseApprovalGroupPageController extends \PageController {
                 'payments.PURCHASE_APPROVAL_GIVEN',
                 'Purchase approval given on {site}',
                 [
-                    'site' => $site_config->Title
+                    'site' => $siteConfig->Title
                 ]
             )
         );
