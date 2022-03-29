@@ -54,6 +54,8 @@ SilverShop\Page\CheckoutPage:
     shippingaddress: 'SilverShop\Checkout\Step\AddressBook'
     billingaddress: 'SilverShop\Checkout\Step\AddressBook'
     summary: 'SilverShop\Checkout\Step\Summary'
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\SilvershopCheckoutExtension'
 
 # extensions
 SilverShop\Forms\ShopAccountForm:

@@ -22,11 +22,17 @@
                 <% end_if %>
 
                 <% if $Cart %>
+
                     <% with $Cart %>
                         <% include SilverShop/Cart/Cart ShowSubtotals=true %>
                     <% end_with %>
 
-                    <h2>Order</h2>
+                    <% if $CheckoutProgressIndicator %>
+                        <div class="nsw-block">
+                        {$CheckoutProgressIndicator}
+                        </div>
+                    <% end_if %>
+
                     <div class="nsw-form">
                         $OrderForm
                     </div>
