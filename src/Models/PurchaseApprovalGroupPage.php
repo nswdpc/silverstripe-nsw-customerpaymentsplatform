@@ -8,6 +8,7 @@ use SilverStripe\ORM\DB;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\Security\Group;
+use SilverStripe\Security\InheritedPermissions;
 use SilverStripe\Security\Member;
 
 /**
@@ -33,23 +34,26 @@ class PurchaseApprovalGroupPage extends \Page
      * Return group code for request access group
      */
     public static function getPurchaseRequestAccessGroup() : string {
-        return 'cpp-request-purchase-access';
+        return Convert::raw2url('cpp-request-purchase-access');
     }
 
     /**
      * Group code that has access to purchase items
      */
     public static function getHasAccessToPurchaseGroup() : string {
-        return 'cpp-has-purchase-access';
+        return Convert::raw2url('cpp-has-purchase-access');
     }
 
     /**
      * Group code that has access to purchase items
      */
     public static function getApproveAccessToPurchaseGroup() : string {
-        return 'cpp-approve-access-to-purchase-access';
+        return Convert::raw2url('cpp-approve-access-to-purchase-access');
     }
 
+    /**
+     * Add purchase approval fields to page
+     */
     public function getCMSFields() {
         $fields = parent::getCmsFields();
         $fields->addFieldToTab(
@@ -66,7 +70,7 @@ class PurchaseApprovalGroupPage extends \Page
     }
 
     /**
-     * Ensure permission to view is maintaineds
+     * Ensure permission to view on page is maintained
      */
     public function onBeforeWrite() {
         parent::onBeforeWrite();
@@ -75,7 +79,7 @@ class PurchaseApprovalGroupPage extends \Page
         if($groupCode) {
             $group = Group::get()->filter(['Code' => $groupCode])->first();
         }
-        $this->CanViewType = 'OnlyTheseUsers';
+        $this->CanViewType = InheritedPermissions::ONLY_THESE_USERS;
         if(!empty($group->ID)) {
             $this->ViewerGroups()->add($group);
         }
@@ -83,6 +87,9 @@ class PurchaseApprovalGroupPage extends \Page
         $this->ShowInSearch = 0;
     }
 
+    /**
+     * Require default records on build
+     */
     public function requireDefaultRecords() {
         $page = PurchaseApprovalGroupPage::get()->first();
         if(empty($page->ID)) {
@@ -103,11 +110,11 @@ class PurchaseApprovalGroupPage extends \Page
      * This is done outside the ORM as it is quicker
      */
     public function RequestingMembers() : ArrayList {
-        $groupCode = self::getApproveAccessToPurchaseGroup();
         $result = DB::query("SELECT m.ID, m.Email, m.FirstName, m.Surname, g.Code AS GroupCode "
                     . " FROM `Member` m "
                     . " INNER JOIN `Group_Members` gm  ON gm.MemberID = m.ID "
                     . " INNER JOIN `Group` g ON (g.ID = gm.GroupID AND "
+                    // member is in on of the requesting/hasaccess groups
                     . " g.Code IN ('"
                     . implode(
                         "','",
