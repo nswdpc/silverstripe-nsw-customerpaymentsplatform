@@ -8,4 +8,4 @@ You may view payment attempts in the CPP administration area. Log in to view the
 
 ## Refunding payments
 
-Navigate to the CPP administration area to find a successul payment. Click the `Refund` button to void this payment.
+Navigate to the CPP administration area to find a successful payment. Click the `Refund` button to void this payment.
