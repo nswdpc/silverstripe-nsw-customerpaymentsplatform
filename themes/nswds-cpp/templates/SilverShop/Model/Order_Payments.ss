@@ -3,7 +3,7 @@
 <div class="nsw-table-responsive" role="region" aria-labelledby="order-payments">
 
     <table class="nsw-table nsw-table--caption-top nsw-table--striped">
-        <caption id="order-Payments">All payment attempts on this order</caption>
+        <caption id="order-payments">All payment attempts on this order</caption>
         <thead>
             <tr>
                 <th colspan="4"><%t SilverShop\Payment.PaymentsHeadline "Payment(s)" %></th>

@@ -1,8 +1,11 @@
-<div class="tags">
-    <span class="nsw-tag">Order #{$Reference}</span>
-    <span class="nsw-tag">Created {$Created.Nice}</span>
+<div class="nsw-block">
+    <div class="tags">
+        <span class="nsw-tag">Order #{$Reference}</span>
+        <span class="nsw-tag">Created {$Created.Nice}</span>
+    </div>
 </div>
 
+<div class="nsw-block">
 <div class="nsw-table-responsive" role="region">
 
     <table class="nsw-table nsw-table--striped">
@@ -29,4 +32,5 @@
         <% include SilverShop/Model/Order_Content_SubTotals %>
     </table>
 
+</div>
 </div>

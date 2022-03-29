@@ -37,43 +37,23 @@
 
     <% with $CurrentMember %>
 
-        <h3><%t SilverShop\Page\AccountPage.ProfileTitle 'Profile' %></h3>
+        <section class="nsw-section nsw-section--box nsw-m-top-lg">
 
-        <div role="region" aria-labelledby="account-profile-caption" tabindex="0">
+            <h3><%t SilverShop\Page\AccountPage.ProfileTitle 'Profile' %></h3>
 
-            <table class="nsw-table nsw-table--striped nsw-table--caption-top">
+            <h4><%t SilverShop\Page\AccountPage.MemberName 'Name' %></h4>
+            <p>{$Name}</p>
 
-                <caption id="account-profile-caption">
-                    Your profile information
-                </caption>
+            <h4><%t SilverShop\Page\AccountPage.MemberEmail 'Email' %></h4>
+            <p>{$Email}</p>
 
-                <tbody>
+            <h4><%t SilverShop\Page\AccountPage.MemberSince 'Member Since' %></h4>
+            <p>{$Created.Nice}</p>
 
-                    <tr>
-                        <th><%t SilverShop\Page\AccountPage.MemberName 'Name' %></th>
-                        <td>{$Name}</td>
-                    </tr>
+            <h4><%t SilverShop\Page\AccountPage.NumberOfOrders 'Number of orders' %></h4>
+            <p><% if $PastOrders %>{$PastOrders.Count}<% else %>0<% end_if %></p>
 
-                    <tr>
-                        <th><%t SilverShop\Page\AccountPage.MemberEmail 'Email' %></th>
-                        <td>{$Email}</td>
-                    </tr>
-
-                    <tr>
-                        <th><%t SilverShop\Page\AccountPage.MemberSince 'Member Since' %></th>
-                        <td>{$Created.Nice}</td>
-                    </tr>
-
-                    <tr>
-                        <th><%t SilverShop\Page\AccountPage.NumberOfOrders 'Number of orders' %></th>
-                        <td><% if $PastOrders %>{$PastOrders.Count}<% else %>0<% end_if %></td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
+        </section>
 
     <% end_with %>
 

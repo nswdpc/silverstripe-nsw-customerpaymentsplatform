@@ -18,73 +18,82 @@
 
                         <div class="nsw-col nsw-col-xs-12 nsw-col-sm-6">
 
-                            <h3>About</h3>
+                            <section class="nsw-section nsw-section--off-white nsw-section--half-padding">
 
-                            <dl>
+                                <div class="nsw-container">
 
-                                <dt><%t SilverShop\Page\Product.Price "Price" %></dt>
-                                <dd>
+                                    <h3><%t SilverShop\Page\Product.About "About" %></h3>
 
-                                <% if $PriceRange %>
-                                    <strong class="value">$PriceRange.Min.Nice</strong>
-                                    <% if $PriceRange.HasRange %>
-                                        - <strong class="value">$PriceRange.Max.Nice</strong>
+                                    <ul>
+
+                                        <li><strong><%t SilverShop\Page\Product.Price "Price" %>:</strong>
+                                        <span>
+                                        <% if $PriceRange %>
+                                            <span class="value">$PriceRange.Min.Nice</span>
+                                            <% if $PriceRange.HasRange %>
+                                                - <span class="value">$PriceRange.Max.Nice</span>
+                                            <% end_if %>
+                                            <span class="currency">$Price.Currency</span>
+                                        <% else_if $Price %>
+                                            <span class="value">$Price.Nice</span>
+                                            <span class="currency">$Price.Currency</span>
+                                        <% end_if %>
+                                        </span>
+                                        </li>
+
+                                    <% if $InternalItemID %>
+                                        <li>
+                                            <strong class="title"><%t SilverShop\Page\Product.Code "Product code" %>:</strong>
+                                            <span class="value">{$InternalItemID}</span>
+                                        </li>
                                     <% end_if %>
-                                    <span class="currency">$Price.Currency</span>
-                                <% else_if $Price %>
-                                    <strong class="value">$Price.Nice</strong>
-                                    <span class="currency">$Price.Currency</span>
-                                <% end_if %>
 
-                                </dd>
+                                    <% if $Model %>
+                                        <li>
+                                            <strong class="title"><%t SilverShop\Page\Product.Model "Model" %>:</strong>
+                                            <span class="value">$Model.XML</span>
+                                        </li>
+                                    <% end_if %>
 
-                            <% if $InternalItemID %>
-                                <dt>
-                                    <span class="title"><%t SilverShop\Page\Product.Code "Product Code" %>:</span>
-                                </dt>
-                                <dd>
-                                    <span class="value">{$InternalItemID}</span>
-                                </dd>
-                            <% end_if %>
+                                    <% if $Size %>
+                                        <li>
+                                            <strong class="title"><%t SilverShop\Page\Product.Size "Size" %>:</strong>
+                                            <span class="value">$Size.XML</span>
+                                        </li>
+                                    <% end_if %>
 
-                            <% if $Model %>
-                                <dt>
-                                    <span class="title"><%t SilverShop\Page\Product.Model "Model" %>:</span>
-                                </dt>
-                                <dd>
-                                    <span class="value">$Model.XML</span>
-                                </dd>
-                            <% end_if %>
+                                    </ul>
 
-                            <% if $Size %>
-                                <dt>
-                                    <span class="title"><%t SilverShop\Page\Product.Size "Size" %>:</span>
-                                </dt>
-                                <dd>
-                                    <span class="value">$Size.XML</span>
-                                </dd>
-                            <% end_if %>
+                                </div>
 
-                            </dl>
+                            </section>
 
                         </div>
 
                         <div class="nsw-col nsw-col-xs-12 nsw-col-sm-6">
 
-                            <% if $IsInCart %>
-                                <h3>Update cart</h3>
-                                <p class="product-numcart">
-                                    <% if $Item.Quantity == 1 %>
-                                        <%t SilverShop\Page\Product.NumItemsInCartSingular "You have this item in your cart" %>
-                                    <% else %>
-                                        <%t SilverShop\Page\Product.NumItemsInCartPlural "You have {Quantity} items in your cart" Quantity=$Item.Quantity %>
-                                    <% end_if %>
-                                </p>
-                            <% else %>
-                                <h3>Add to cart</h3>
-                            <% end_if %>
+                            <section class="nsw-section nsw-section--half-padding nsw-section--grey-03">
 
-                            <% include NSWDPC/Waratah/PageForm %>
+                                <div class="nsw-container">
+
+                                    <% if $IsInCart %>
+                                        <h3><%t SilverShop\Page\Product.UpdateCart "Update cart" %></h3>
+                                        <p class="product-numcart">
+                                            <% if $Item.Quantity == 1 %>
+                                                <%t SilverShop\Page\Product.NumItemsInCartSingular "You have this item in your cart" %>
+                                            <% else %>
+                                                <%t SilverShop\Page\Product.NumItemsInCartPlural "You have {Quantity} items in your cart" Quantity=$Item.Quantity %>
+                                            <% end_if %>
+                                        </p>
+                                    <% else %>
+                                        <h3><%t SilverShop\Page\Product.Buy "Buy" %></h3>
+                                    <% end_if %>
+
+                                    <% include NSWDPC/Waratah/PageForm %>
+
+                                </div>
+
+                            </section>
 
                         </div>
 
@@ -105,6 +114,8 @@
 
             </div>
             <%-- product --%>
+
+            </section>
 
         </main>
 
