@@ -81,8 +81,14 @@ class Payment extends DataObject implements PermissionProvider
 
     // ANY OTHER STATUS - Payment hasn't been successful
 
+    /**
+     * @var string
+     */
     private static $table_name = 'CppPayment';
 
+    /**
+     * @var string
+     */
     private static $default_sort = "Created DESC";
 
     /**
@@ -117,10 +123,19 @@ class Payment extends DataObject implements PermissionProvider
      */
     const CURRENCY_CODE = 'AUD';
 
+    /**
+     * @var string
+     */
     private static $singular_name = 'CPP payment';
 
+    /**
+     * @var string
+     */
     private static $plural_name = 'CPP payments';
 
+    /**
+     * @var array
+     */
     private static $db = [
         // collect payer details
         'PayerFirstname' => 'Varchar(255)',
@@ -160,6 +175,9 @@ class Payment extends DataObject implements PermissionProvider
         'RecGLIP' => 'Varchar(255)' // SAP GL Lodgement ID
     ];
 
+    /**
+     * @var string
+     */
     private static $defaults = [
         'AmountCurrency' => 'AUD',
         'AmountAmount' => 0,
@@ -174,6 +192,9 @@ class Payment extends DataObject implements PermissionProvider
         'IsDuplicate' => 0
     ];
 
+    /**
+     * @var string
+     */
     private static $indexes = [
         'AgencyTransactionId' => [ 'type' => 'unique', 'columns' => ['AgencyTransactionId'] ],
         'PaymentMethod' => true,
@@ -191,14 +212,23 @@ class Payment extends DataObject implements PermissionProvider
         'IsDuplicate' => true
     ];
 
+    /**
+     * @var string
+     */
     private static $has_one = [
         'OmnipayPayment' => OmnipayPayment::class // link to the payment record
     ];
 
+    /**
+     * @var string
+     */
     private static $has_many = [
         'Disbursements' => Disbursement::class,
     ];
 
+    /**
+     * @var string
+     */
     private static $searchable_fields = [
         'ProductDescription' => 'PartialMatchFilter',
         'AgencyTransactionId' => 'PartialMatchFilter',
@@ -215,6 +245,9 @@ class Payment extends DataObject implements PermissionProvider
         'PaymentStatus' => 'ExactMatchFilter'
     ];
 
+    /**
+     * @var string
+     */
     private static $summary_fields = [
         'Created.Nice' => 'Created',
         'AgencyTransactionId' => 'Agency Txn Id',
@@ -230,6 +263,9 @@ class Payment extends DataObject implements PermissionProvider
         'IsReconciledLabel.Nice' => 'Reconciled?'
     ];
 
+    /**
+     * Return record title
+     */
     public function getTitle()
     {
         if (!$this->exists()) {
