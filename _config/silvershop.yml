@@ -18,6 +18,12 @@ SilverShop\Checkout\CheckoutConfig:
 SilverStripe\i18n\i18n:
   default_locale: en_AU
 
+## Default address for new addresses
+SilverShop\Model\Address:
+  default_country: AU
+  extensions:
+    - 'NSWDPC\Payments\NSWGOVCPP\Agency\SilvershopAddressExtension'
+
 SilverShop\Page\Product:
   allow_zero_price: true
   # grams
