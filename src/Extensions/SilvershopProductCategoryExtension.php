@@ -8,6 +8,7 @@ use SilverStripe\Security\Security;
 
 /**
  * Provides extension handling for Product Categories
+ * Restrict "showable" products based on the user signed in, whether they can view the product or not
  *
  * @author James
  */
