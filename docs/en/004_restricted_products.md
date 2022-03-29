@@ -21,7 +21,7 @@ On build, 3 groups are auto-created:
 
 1. 'Purchase access requestors' - users who can request access to restricted products
 2. 'Have purchase access' - users who have been given access to restricted products
-3. 'Purchase access approvers' - approvers who can move people between the two group above
+3. 'Purchase access approvers' - approvers who can move people between the two groups above
 
 These groups are maintained in the system with no special permissions.
 
