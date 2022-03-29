@@ -9,7 +9,7 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HTMLReadonlyField;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\TextareaField;
-use SilverStripe\Forms\RequiredFields;;
+use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Group;
@@ -17,6 +17,7 @@ use SilverStripe\Security\InheritedPermissions;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\View\ArrayData;
 
 /**
  * Controller for RequestPurchaseAccessPage
@@ -221,6 +222,7 @@ class RequestPurchaseAccessPageController extends \PageController {
         );
 
         $page = RequestPurchaseAccessPage::get()->first();
+        $body = "";
         if(!empty($page->ID)) {
             $body = $page->RequestEmailContent;
             if(!$body) {
@@ -230,15 +232,16 @@ class RequestPurchaseAccessPageController extends \PageController {
 
         // per-request details
         $fromMemberContent = ArrayData::create([
-            'ApprovalPageLink' => $approvalPage,
+            'Content' => $body,
+            'ApprovalPage' => $approvalPage,
             'RequestAccessReason' => isset($data['RequestAccessReason']) ? $data['RequestAccessReason'] : '',
             'FromMember' => $fromMember
         ]);
 
         // Add extra specific request details on
-        $body .= $fromMemberContent->renderWith('NSWDPC/Payments/NSWGOVCPP/Agency/PurchaseRequestFrom');
+        $emailContent = $fromMemberContent->renderWith('NSWDPC/Payments/NSWGOVCPP/Agency/PurchaseRequestFrom');
 
-        $email->setBody( $body );
+        $email->setBody( $emailContent );
 
         return $email->send();
     }
