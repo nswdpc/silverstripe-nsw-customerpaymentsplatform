@@ -12,7 +12,7 @@ This module provides support within a Silverstripe install to take payments from
 + Payment completion endpoint
 + Payment cancel/success handling
 
-## Requisites
+## Prerequisites
 
 To take payments with this module, you must
 
@@ -24,7 +24,7 @@ To take payments with this module, you must
 
 + The [Omnipay](https://github.com/thephpleague/omnipay) project
 + [Silverstripe Omnipay](https://github.com/silverstripe/silverstripe-omnipay) module
-+ [NSW DPC Omnipay gateway for the Customer Payments Platform](https://github.com/nswdpc/omnipay-nswcpp)
++ [NSW DPC Omnipay gateway for the Customer Payments Platform](https://github.com/nswdpc/omnipay-nswcpp) - this is a platform agnostic module.
 
 ## Requirements
 
