@@ -1,2 +1,2 @@
-<%-- possible custom page for add access --%>
+<%-- possible custom page layout --%>
 <% include NSWDPC/Waratah/PageWrapper %>
