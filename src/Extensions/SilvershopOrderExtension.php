@@ -13,11 +13,18 @@ use SilverStripe\Omnipay\Model\Payment as OmnipayPayment;
  */
 class SilvershopOrderExtension extends DataExtension
 {
+
+    /**
+     * @var array
+     */
     private static $indexes = [
         // look up orders on reference, needs an index
         'Reference' => true
     ];
 
+    /**
+     * @var array
+     */
     private static $belongs_to = [
         // This Silvershop order belongs to the OmnipayPayment.OrderID
         // see {@link \SilverShop\Extension\PaymentExtension}
