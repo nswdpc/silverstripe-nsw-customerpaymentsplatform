@@ -26,9 +26,9 @@ class RequestAccessToPurchaseExtension extends DataExtension
         $requestCode = PurchaseApprovalGroupPage::getPurchaseRequestAccessGroup();
         $requestGroup = Group::get()->filter(['Code' => $requestCode])->first();
         if(empty($requestGroup->ID)) {
-            $requestGroup= Group::create([
-                'Code' => $requestCode
-            ]);
+            $requestGroup = Group::create();
+            // Do not allow ORM to modify request code
+            $requestGroup->setField('Code', $requestCode);
             DB::alteration_message("Request purchase access group created", "created");
         }
 
@@ -46,9 +46,8 @@ class RequestAccessToPurchaseExtension extends DataExtension
         $hasCode = PurchaseApprovalGroupPage::getHasAccessToPurchaseGroup();
         $hasGroup = Group::get()->filter(['Code' => $hasCode])->first();
         if(empty($hasGroup->ID)) {
-            $hasGroup= Group::create([
-                'Code' => $hasCode
-            ]);
+            $hasGroup = Group::create();
+            $hasGroup->setField('Code', $hasCode);
             DB::alteration_message("Has purchase access group created", "created");
         }
 
@@ -67,9 +66,8 @@ class RequestAccessToPurchaseExtension extends DataExtension
         $approveCode = PurchaseApprovalGroupPage::getApproveAccessToPurchaseGroup();
         $approveGroup = Group::get()->filter(['Code' => $approveCode])->first();
         if(empty($approveGroup->ID)) {
-            $approveGroup = Group::create([
-                'Code' => $approveCode
-            ]);
+            $approveGroup = Group::create();
+            $approveGroup->setField('Code', $approveCode);
             DB::alteration_message("Approve purchase access group created", "created");
         }
 
